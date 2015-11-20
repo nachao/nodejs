@@ -2,35 +2,35 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
 		<style type="text/css">
 			body{ font-family: 'Segoe UI Light','Segoe UI','Microsoft Jhenghei','微软雅黑', '黑体',sans-serif; }
 		</style>
 	</head>
 	<body>
 		<h1>Welcome!</h1>
-		<form>
-			<input type="text" value="" name="account" placeholder="请输入" />
-			<input type="submit" value="确认" />
-		</form>
-		<script>
+		<input id="account" type="text" value="" name="account" placeholder="请输入" />
+		<input id="btn" type="button" value="确认" />
+		<script type="text/javascript" src="/web/js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="/web/js/comm.js" ></script>
+		<script type="text/javascript">
 
-			// function getData () {
-				var xhr = new XMLHttpRequest();
 
-				console.log(xhr);
+			var user = new uxUser();
 
-				xhr.open('GET', 'http://localhost:1337/', true);
+			$('#btn').click(function(){
+				user.get($('#account').val(), function(data){
+					console.log(data);
+				});
+			});
 
-				xhr.onreadystatechange = function () {
-					console.log(xhr.readyState);
-					if ( xhr.readyState == 4 ) {
-						if ( xhr.status == 200 ) {
-							console.log(xhr.responseText);
-						}
-					}
-					xhr.send(null);
-				}
-			// }
+			// $.ajax({
+			// 	url: 'http://localhost:1337',
+			// 	data: 'account=123&b=2&c=3',
+			// 	success: function ( data, status ) {
+			// 		console.log(data);
+			// 	}
+			// });
 
 		</script>
 	</body>

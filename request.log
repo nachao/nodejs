@@ -1,4 +1,0 @@
-客户端请求所使用的方法为：GET
-客户端请求所用的url字符串为：/a=1
-客户端请求头对象为：{"host":"127.0.0.1:8080","connection":"keep-alive","cache-control":"max-age=0","accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8","user-agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36","accept-encoding":"gzip, deflate, sdch","accept-language":"zh-CN,zh;q=0.8","cookie":"_ga=GA1.1.1244547270.1444721219"}
-客户端请求所用HTTP版本为：1.1
