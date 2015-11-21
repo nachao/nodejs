@@ -1,0 +1,37 @@
+
+body{
+	font-family: 'Segoe UI Light','Segoe UI','Microsoft Jhenghei','微软雅黑', '黑体',sans-serif;
+}
+
+.userUI .icon{
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	overflow: hidden;
+	float: left;
+	background: #eee;
+}
+.userUI .icon img{
+	width: 100px;
+	float: left;
+}
+.userUI .info{
+	float: left;
+	height: 100px;
+	margin-left: 20px;
+}
+.userUI .info p{
+	padding: 0px;
+	margin: 0px;
+}
+.userUI .info .name{
+	font-size: 24px;
+	margin-top: 18px;
+}
+.userUI .info .sum{
+	font-size: 14px;
+}
+
+.entryUI{
+
+}
