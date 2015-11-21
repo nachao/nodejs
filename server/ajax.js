@@ -1,4 +1,12 @@
 
+	/*
+	*	此文件主要用户前端的Ajax数据请求。
+	*
+	*	@ auther Na Chao
+	*	@ data 15-11-21
+	*/
+
+
 
 	// 引用全部会使用到的模块
 	var url = require('url'),
@@ -6,6 +14,9 @@
 
 	// 引用专属功能
 	var ux = require('./core');
+
+	// 链接数据库
+	ux.initMysql();
 	
 	// 创建服务对象
 	http.createServer(function(req, res){
@@ -45,4 +56,4 @@
 	}).listen(8081, "localhost");	// 开启服务端口
 
 	// 提示
-	console.log('创建Ajax服务成功！');
+	console.log('Ajax...!');

@@ -3,7 +3,7 @@
 function Ux73 () {
 
 
-	this.connection = this.initMysql();
+	this.connection = null;
 
 
 	// this.initServer();
@@ -79,41 +79,45 @@ Ux73.prototype.md5 = function ( value ) {
 
 // 获取页面
 Ux73.prototype.getHtml = function ( name, callback ) {
-	var fs = require('fs'),
-		that = this;
+	var that = this,
+		fs = require('fs'),
+		path = require("path"),
+		mime = '',
+		form = '';
 
-	var mime = '';
-
-	var path = require("path");
-
-	if ( name.lastIndexOf('/') == name.length-1 ) {
+	if ( name.charAt(name.length-1) == '/' ) {
 		name += 'index';
 	}
 	if ( name.charAt(0) == '/' ) {
 		name = name.replace('/', '');
 	}
-	if ( name.indexOf('.html') < 0 && name.indexOf('.css') < 0 && name.indexOf('.js') < 0 ) {
+	if ( path.extname(name) == '' ) {
 		name += '.html';
 	}
-
+	if ( path.extname(name) == '.js' ) {
+		mime = 'application/x-javascript';
+	}
+	if ( path.extname(name) == '.css' ) {
+		mime = 'text/css';
+	}
+	if ( path.extname(name) == '.jpg' ) {
+		mime = 'image/jpeg';
+		form = 'binary';
+	}
+	
 	name = '../' + name;
 
-	if ( path.extname(name) == '.js' ) {
-		mime = 'application/x-javascript'
-	}
-
 	fs.exists(name, function(exists){
+		// console.log(name, mime, form, exists);
 		if ( exists ) {
-			fs.readFile( name, 'utf8', function(err, result){
+			fs.readFile( name, form, function(err, result){
 				if ( err )
 					that.getHtml('/errer', callback);
-				else
-					if ( callback ) 
-						callback(result, mime);
+				else if ( callback ) 
+					callback(result, mime, form);
 			});
-		} else {
-			if ( callback ) 
-				callback('<html>404</html>');
+		} else if ( callback ) {
+			callback('<html>404</html>');
 		}
 	});
 }
@@ -147,12 +151,13 @@ Ux73.prototype.initMysql = function () {
 		});
 		connection.connect(function(err) {
 			if (err) {
-				console.error('数据库链接失败!: ' + err.stack);
+				console.error('mysql no!: ' + err.stack);
 			} else {
-				console.log('数据库链接成功!');
+				console.log('Mysql...!');
 			}
 		});
 
+	this.connection = connection;
 	return connection;
 }
 

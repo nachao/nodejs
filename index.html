@@ -2,35 +2,51 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<meta http-equiv="Access-Control-Allow-Origin" content="*">
-		<style type="text/css">
-			body{ font-family: 'Segoe UI Light','Segoe UI','Microsoft Jhenghei','微软雅黑', '黑体',sans-serif; }
-		</style>
+		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
 	</head>
 	<body>
-		<h1>Welcome!</h1>
-		<input id="account" type="text" value="" name="account" placeholder="请输入" />
-		<input id="btn" type="button" value="确认" />
-		<script type="text/javascript" src="/web/js/jquery-1.11.0.min.js" ></script>
-		<script type="text/javascript" src="/web/js/comm.js" ></script>
+
+		<!-- 登录和注册 -->
+		<div class="entryUI" >
+			<h1>Welcome!</h1>
+			<form id="enteny" onsubmit="return entry();" >
+				<input id="account" type="text" value="" name="account" placeholder="请输入" />
+				<input id="btn" type="button" value="确认" />
+			</form>
+		</div>
+
+		<!-- 登录和注册 -->
+		<div class="userUI">
+			<div class="icon">
+				<img src="./img/avatar.jpg" />
+			</div>
+			<div class="info">
+				<p class="name">asds</p>
+				<p class="sum">100</p>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="./js/comm.js" ></script>
 		<script type="text/javascript">
 
 
 			var user = new uxUser();
 
 			$('#btn').click(function(){
-				user.get($('#account').val(), function(data){
-					console.log(data);
-				});
+				entry();
 			});
 
-			// $.ajax({
-			// 	url: 'http://localhost:1337',
-			// 	data: 'account=123&b=2&c=3',
-			// 	success: function ( data, status ) {
-			// 		console.log(data);
-			// 	}
-			// });
+			function entry () {
+				user.get($('#account').val(), function(data){
+					data = JSON.parse(data);
+					console.log(data);
+				});
+
+				return false;
+			}
+
+
 
 		</script>
 	</body>

@@ -1,4 +1,11 @@
 
+	/*
+	*	此文件主要用来返回用户获取的页面，以及其他文件
+	*
+	*	@ auther Na Chao
+	*	@ data 15-11-21
+	*/
+
 
 	// 引用全部会使用到的模块
 	var url = require('url'),
@@ -18,15 +25,14 @@
 		}
 
 		// 打开指定页面
-		// console.log(info);
-		ux73.getHtml(info.pathname, function(html, mime){
-			if ( mime ) {
+		console.log(info);
+		ux73.getHtml(info.pathname, function(html, mime, form){
+			if ( mime ) 
 				res.writeHead(200,{ 'Content-type': mime });
-			}
-			res.end(html);
+			res.end(html, form);
 		});
 
 	}).listen(8080, "localhost");	// 开启服务端口
 
 	// 提示
-	console.log('创建Server服务成功！');
+	console.log('Server...!');
