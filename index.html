@@ -3,50 +3,45 @@
 	<head>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
+		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="./js/web.comm.js" ></script>
+		<script type="text/javascript">
+
+			var ux = new uxUser();
+
+		</script>
 	</head>
 	<body>
 
 		<!-- 登录和注册 -->
-		<div class="entryUI" >
+		<div class="UI entryUI" >
 			<h1>Welcome!</h1>
-			<form id="enteny" onsubmit="return entry();" >
+			<form id="enteny" onsubmit="return ux.setEntry(this.account.value);" >
 				<input id="account" type="text" value="" name="account" placeholder="请输入" />
 				<input id="btn" type="button" value="确认" />
 			</form>
 		</div>
 
 		<!-- 登录和注册 -->
-		<div class="userUI">
+		<div class="UI userUI">
 			<div class="icon">
 				<img src="./img/avatar.jpg" />
 			</div>
 			<div class="info">
-				<p class="name">asds</p>
-				<p class="sum">100</p>
+				<p class="account">
+					<span class="name">-</span>
+					<a class="logout" href="javascript:;" >注销</a>
+				</p>
+				<p class="sum">0</p>
 			</div>
 		</div>
-
-		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
-		<script type="text/javascript" src="./js/comm.js" ></script>
 		<script type="text/javascript">
 
+			var key = ux.getUserByCookie();
 
-			var user = new uxUser();
-
-			$('#btn').click(function(){
-				entry();
-			});
-
-			function entry () {
-				user.get($('#account').val(), function(data){
-					data = JSON.parse(data);
-					console.log(data);
-				});
-
-				return false;
+			if ( !key ) {
+				ux.setEntryUI();
 			}
-
-
 
 		</script>
 	</body>

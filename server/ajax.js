@@ -21,7 +21,7 @@
 	// 创建服务对象
 	http.createServer(function(req, res){
 		var info = url.parse(req.url, true);	// 用户请求的参数
-		console.log(info);
+		console.log(info.query);
 
 		if ( req.url =="/favicon.ico" ) {
 			return;
@@ -34,23 +34,9 @@
 		});
 
 		// 调用专属功能 - 获取并判断用户操作
-		ux.getUse(info.query, function(key, account){
-			if ( key == '登录或注册' ) {
-				ux.userSelect(account, function(data){
-					if ( data ) {
-						res.write(data);
-						res.end();
-					} else {
-						ux.userCreate(account, function(data){
-							res.write(data);
-							res.end();
-						});
-					}
-				});
-			} else {
-				res.write(key);
-				res.end();
-			}
+		ux.getUse(info.query, function(data){
+			res.write(data);
+			res.end();
 		});
 
 	}).listen(8081, "localhost");	// 开启服务端口

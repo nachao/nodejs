@@ -3,6 +3,10 @@ body{
 	font-family: 'Segoe UI Light','Segoe UI','Microsoft Jhenghei','微软雅黑', '黑体',sans-serif;
 }
 
+.UI{
+	display: none;
+}
+
 .userUI .icon{
 	width: 100px;
 	height: 100px;
@@ -10,6 +14,7 @@ body{
 	overflow: hidden;
 	float: left;
 	background: #eee;
+	margin-right: 20px;
 }
 .userUI .icon img{
 	width: 100px;
@@ -18,15 +23,24 @@ body{
 .userUI .info{
 	float: left;
 	height: 100px;
-	margin-left: 20px;
 }
 .userUI .info p{
 	padding: 0px;
 	margin: 0px;
 }
+.userUI .info .account{
+	margin-top: 18px;
+}
 .userUI .info .name{
 	font-size: 24px;
-	margin-top: 18px;
+}
+.userUI .info .logout{
+	color: #000;
+	font-size: 12px;
+	text-decoration: none;
+}
+.userUI .info .logout:hover{
+	text-decoration: underline;
 }
 .userUI .info .sum{
 	font-size: 14px;

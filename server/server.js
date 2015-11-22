@@ -25,7 +25,7 @@
 		}
 
 		// 打开指定页面
-		console.log(info);
+		// console.log(info.pathname);
 		ux73.getHtml(info.pathname, function(html, mime, form){
 			if ( mime ) 
 				res.writeHead(200,{ 'Content-type': mime });

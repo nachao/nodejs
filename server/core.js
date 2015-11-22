@@ -108,7 +108,7 @@ Ux73.prototype.getHtml = function ( name, callback ) {
 	name = '../' + name;
 
 	fs.exists(name, function(exists){
-		// console.log(name, mime, form, exists);
+		console.log(name, mime, form, exists);
 		if ( exists ) {
 			fs.readFile( name, form, function(err, result){
 				if ( err )
@@ -123,18 +123,57 @@ Ux73.prototype.getHtml = function ( name, callback ) {
 }
 
 
-// 获取页面
+// 获取页面，执行相应操作，且返回对应的json
 Ux73.prototype.getUse = function ( query, callback ) {
-	var result = '未知操作';
+	var that = this,
+		result = {
+			status: 404,
+			data: ''
+		};
 
-	for ( key in query ) {
-		if ( key == 'account' ) {
-			result = '登录或注册';
-			if ( callback )
-				callback(result, query.account);
+		callback = callback || $.noop;
+
+	// 登录或注册
+	if ( query._ == 'entry' ) {
+		if ( query.key ) {
+			that.userSelectByKey(query.key, function(data){	// 根据Key获取用户信息
+				if ( data ) {
+					result.data = data;
+					result.status = 200;
+					that.setUserStatus(query.key, '1');		// 设置用户为在线状态
+				}
+				callback(JSON.stringify(result));
+			});
+		} else if ( query.account ) {
+			that.userSelect(query.account, function(data){	// 根据Name获取用户信息
+				if ( data ) {
+					result.data = data;
+					result.status = 200;
+					that.setUserStatus(query.key, '1');		// 设置用户为在线状态
+					callback(JSON.stringify(result));
+				} else {
+					that.userCreate(query.account, function(data){	// 如果没获取到，则根据给定的账户名创建新账号
+						if ( data ) {
+							result.data = data;
+							result.status = 200;
+						}
+						callback(JSON.stringify(result));
+					});
+				}
+			});
 		}
-		if ( key == 'logout' ) {
-			result = '注销';
+	}
+
+	// 退出登录
+	if ( query._ == 'logout' ) {
+		if ( query.key ) {
+			that.setUserStatus(query.key, '0', function(){
+				result.data = {
+					msg: 'success'
+				}
+				result.status = 200;
+				callback(JSON.stringify(result));
+			});	
 		}
 	}
 }
@@ -162,6 +201,19 @@ Ux73.prototype.initMysql = function () {
 }
 
 
+// 根据key获取用户信息
+Ux73.prototype.userSelectByKey = function ( key, callback ) {
+	var sql = "SELECT `key`, `name`, `sum` FROM ux73.user where `key` = '"+ key +"';";
+	this.connection.query(sql, function(err, rows) {
+		if (err)
+			console.log(err);
+		else
+			if ( callback )
+				callback(rows[0]);
+	});
+}
+
+
 // 判断用户是的存在，如果存在则返回用户信息
 Ux73.prototype.userSelect = function ( account, callback ) {
 	var sql = "SELECT `key`, `name`, `sum` FROM ux73.user where `name` = '"+ account +"';";
@@ -170,7 +222,20 @@ Ux73.prototype.userSelect = function ( account, callback ) {
 			console.log(err);
 		else
 			if ( callback )
-				callback(JSON.stringify(rows[0]));
+				callback(rows[0]);
+	});
+}
+
+
+// 设置用户状态
+Ux73.prototype.setUserStatus = function ( key, status, callback ) {
+	var sql = "UPDATE `ux73`.`user` SET `status`='"+ status +"' WHERE `key`='"+ key +"';";
+	this.connection.query(sql, function(err, rows) {
+		if (err)
+			console.log(err);
+		else
+			if ( callback )
+				callback();
 	});
 }
 
@@ -183,12 +248,12 @@ Ux73.prototype.userCreate = function ( account, callback ) {
 			name: account,
 			sum: 100,
 		},
-		sql = "INSERT INTO `ux73`.`user` (`key`, `name`, `sum`, `time`) VALUES ('"+ user.key +"', '"+ user.name +"', '"+ user.sum +"', '"+ time +"');"
+		sql = "INSERT INTO `ux73`.`user` (`key`, `name`, `sum`, `create_time`) VALUES ('"+ user.key +"', '"+ user.name +"', '"+ user.sum +"', '"+ time +"');"
 	this.connection.query(sql, function(err) {
 		if (err)
 			console.log(err);
 		else
-			callback(JSON.stringify(user));
+			callback(user);
 	});
 }
 
