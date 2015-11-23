@@ -89,6 +89,8 @@ User.prototype.setEntry = function ( param ) {
 
 	param._ = 'entry';
 
+	$('#loading').show();
+
 	this.comm.use(function(data){
 		if ( data && data.key ) {
 			that.userinfo = data;						// 保存数据到功能中
@@ -100,6 +102,8 @@ User.prototype.setEntry = function ( param ) {
 			that.setEntryUI();
 			alert('请重新登录！');
 		}
+
+		$('#loading').hide();
 	}, param);
 
 	return false;

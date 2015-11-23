@@ -5,6 +5,8 @@ function GuessBlindly ( account ) {
 	this.comm = new Comm();
 
 	this.socket = this.sio();
+
+	this.data = null;
 }
 
 
@@ -28,22 +30,25 @@ GuessBlindly.prototype.sio = function () {
 		console.log('我的信息：', userinfo);
 	});
 
+	// 获取到数据后的操作
 	socket.on('send guess blindly', function(data){
-		console.log(data);
+		for ( var key in data ) {
+			$('.temp[key='+ key +']').find('span').html(data[key].number);
+		}
+	});
 
-		console.log( $('.temp[key='+ data.key +']').html(data.number) );
-
-		// for ( var key in data ) {
-		// 	$('.temp[key='+ key +']').html(data[key].number);
-		// }
-
+	// 获取到单个数据后的操作
+	socket.on('send guess blindly item', function(data){
+		$('.temp[key='+ data.key +']').find('span').html(data.number);
 	});
 
 	// socket.on('login', '账号')
 
-	socket.on('say success', function(msg){
-		console.log('留言板:', msg);
-	});
+	// socket.on('say success', function(msg){
+	// 	console.log('留言板:', msg);
+	// });
+
+	socket.emit('get guess blindly');	// 向后台发送数据请求
 
 	return socket;
 }
@@ -66,8 +71,7 @@ GuessBlindly.prototype.opt = function ( value, userkey, callback ) {
 GuessBlindly.prototype.init = function ( userkey ) {
 	var that = this;
 
-	console.log(userkey);
-
+	// 获取规格
 	this.comm.use(function(data){
 		var area = $('#guess_blindly');
 		area.show().find('.temp').remove();
@@ -76,19 +80,18 @@ GuessBlindly.prototype.init = function ( userkey ) {
 			var temp = $('#qb_template').clone();
 			i += 1;
 
-			temp.html(val).attr('title', i).attr('key', i).show().addClass('temp').removeAttr('id');
+			temp.attr('title', i).attr('key', i).show().addClass('temp').removeAttr('id');
 			temp.click(function(){
 				that.socket.emit('opt guess blindly', {
 					key: i,
 					userkey: userkey
 				});
-				// that.opt(i, userkey, function(data){
-				// 	console.log(data);
-				// 	temp.html( parseInt(temp.html()) + 1 );
-				// });
 			});
 			area.append(temp);
 		});
+
+		// 获取数据
+		that.socket.emit('get guess blindly');
 	}, {
 		_:'001',
 		userkey: userkey

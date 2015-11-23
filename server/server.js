@@ -55,35 +55,39 @@
 
 	socket.on('connection', function(res){
 
+		console.log(guess);
+
 		// console.log(res);
 
-		res.send('你好');
+		// res.send('你好');
 
-		number += 1;
+		// number += 1;
 
 
-		res.on('message', function(msg){
-			console.log('接收到一个信息：', msg);
-		});
+		// res.on('message', function(msg){
+		// 	console.log('接收到一个信息：', msg);
+		// });
 
-		res.on('say', function(msg){
-			text += msg;
+		// res.on('say', function(msg){
+		// 	text += msg;
 
-			res.emit('say success', text);
-			res.broadcast.emit('say success', text);
-		});
+		// 	res.emit('say success', text);
+		// 	res.broadcast.emit('say success', text);
+		// });
 
 		res.on('get guess blindly', function(){
-			res.emit('send guess blindly', guess[data.key]);
+			res.emit('send guess blindly', guess);
 		})
 
 		res.on('disconnect', function(){
-			number -= 1;
 			console.log('客户端断开连接');
-			res.broadcast.emit('say success', '当前用户在线数量：'+ number);
+			// number -= 1;
+			// res.broadcast.emit('say success', '当前用户在线数量：'+ number);
 		});
 
 		res.on('opt guess blindly', function(data){
+			console.log(data);
+
 			if ( typeof(data) == 'object' && data.key ) {
 				guess[data.key].number += 1;
 
@@ -91,13 +95,13 @@
 					guess[data.key].user.push(data.key);
 				}
 
-				res.emit('send guess blindly', guess[data.key]);
-				res.broadcast.emit('send guess blindly', guess[data.key]);
+				res.emit('send guess blindly item', guess[data.key]);
+				res.broadcast.emit('send guess blindly item', guess[data.key]);
 			}
 		})
 
-		res.emit('say success', '当前用户在线数量：'+ number);
-		res.broadcast.emit('say success', '当前用户在线数量：'+ number);
+		// res.emit('say success', '当前用户在线数量：'+ number);
+		// res.broadcast.emit('say success', '当前用户在线数量：'+ number);
 	});
 
 
