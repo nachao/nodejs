@@ -14,9 +14,13 @@
 
 	// 引用专属功能
 	var ux = require('./core');
+
+	var sio = require('socket.io');
+
+	ux.dm.init();
 	
 	// 创建服务对象
-	http.createServer(function(req, res){
+	var server = http.createServer(function(req, res){
 		var info = url.parse(req.url, true);	// 用户请求的参数
 		console.log(info.query);
 
@@ -37,6 +41,7 @@
 		});
 
 	}).listen(8081, "localhost");	// 开启服务端口
+
 
 	// 提示
 	console.log('Ajax...!');

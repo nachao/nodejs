@@ -2,9 +2,9 @@
 // 数据库管理
 function DataManagement () {
 
-	// this.connection = null;
+	this.connection = null;
 
-	this.connection = this.initMysql();
+	// this.connection = this.initMysql();
 }
 
 
@@ -19,7 +19,7 @@ DataManagement.prototype.md5 = function ( value ) {
 
 
 // 链接数据库
-DataManagement.prototype.initMysql = function () {
+DataManagement.prototype.init = function () {
 	var mysql = require('mysql'),
 		connection = mysql.createConnection({
 			host     : 'localhost',

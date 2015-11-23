@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
 		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="../node_modules/socket.io/node_modules/socket.io-client/socket.io.js" ></script>
 		<script type="text/javascript" src="./js/comm.js" ></script>
 		<script type="text/javascript" src="./js/user.js" ></script>
 		<script type="text/javascript" src="./js/guess_blindly.js" ></script>
@@ -19,7 +20,7 @@
 		<!-- 登录和注册 -->
 		<div class="UI entryUI" >
 			<h1>Welcome!</h1>
-			<form id="enteny" onsubmit="return ux.setEntry({ account: this.account.value });" >
+			<form id="enteny" onsubmit="return user.setEntry({ account: this.account.value });" >
 				<input id="account" type="text" value="" name="account" placeholder="请输入" />
 				<input id="btn" type="button" value="确认" />
 			</form>

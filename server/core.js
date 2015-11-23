@@ -78,11 +78,16 @@ Ux.prototype.getHtml = function ( name, callback ) {
 		mime = 'image/jpeg';
 		form = 'binary';
 	}
+	if ( path.basename(name) == 'socket.io.js' ) {
+		name = '../' + name;
+	} 
 	
 	name = '../' + name;
 
+	// console.log(name);
+
 	fs.exists(name, function(exists){
-		console.log(name, mime, form, exists);
+		// console.log(name, mime, form, exists);
 		if ( exists ) {
 			fs.readFile( name, form, function(err, result){
 				if ( err )
@@ -111,7 +116,7 @@ Ux.prototype.getUse = function ( query, callback ) {
 	// 缓存登录
 	if ( query._ == 'entry' && query.userkey ) {
 		that.dm.userSelectByKey(query.userkey, function(data){	// 根据Key获取用户信息
-			console.log(data);
+			// console.log(data);
 			if ( data ) {
 				result = that.successData(data);
 				that.dm.setUserStatus(query.userkey, '1');		// 设置用户为在线状态

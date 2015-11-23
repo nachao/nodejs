@@ -105,6 +105,7 @@ p{
 .itemUI .close{
 	float: right;
 	display: none;
+	margin-top: 5px;
 }
 .itemUI:hover{
 	border-color: #aaa;

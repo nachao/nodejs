@@ -10,15 +10,13 @@ function Comm ( account ) {
 Comm.prototype.use = function ( callback, value ) {
 	var data = '$=' + new Date().getTime();
 
-	console.log(user.userinfo.key);
-
 	// 两个参数型
 	if ( typeof(value) == 'string' && user.userinfo.key ) {
 		data += '&_='+ value +'&userkey='+ user.userinfo.key;
 
 	// 多个参数对象型
 	} else if ( typeof(value) == 'object' ) {
-		if ( !value.userkey ) {
+		if ( !value.userkey && user.userinfo.key ) {
 			value.userkey = user.userinfo.key;		
 		}
 		for ( var k in value ) {
