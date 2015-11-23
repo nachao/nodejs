@@ -14,9 +14,6 @@
 
 	// 引用专属功能
 	var ux = require('./core');
-
-	// 链接数据库
-	ux.initMysql();
 	
 	// 创建服务对象
 	http.createServer(function(req, res){

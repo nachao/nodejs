@@ -28,8 +28,9 @@
 			url: 'http://localhost:8081',
 			data: '_='+ key + data,
 			success: function ( res ) {
+				res = JSON.parse(res);
 				if ( callback )
-					callback(JSON.parse(res).data);
+					callback(res.data, res);
 			}
 		});
 	}
@@ -53,6 +54,8 @@
 		el.find('.logout').one('click', function(){
 			that.setLogout();
 		});
+
+		$('.allUI').show();	// 登录成功后显示功能列表
 	}
 
 
@@ -62,9 +65,11 @@
 			that = this;
 
 		el.find('#account').val('');
-		el.find('#btn').one('click', function(){
+		el.find('#btn').unbind('click').bind('click', function(){
 			that.setEntry({ account: el.find('#account').val() });
 		});
+
+		$('.allUI').hide();	// 注销成功后显示功能列表
 	}
 
 
@@ -72,11 +77,11 @@
 	uxUser.prototype.setLogout = function () {
 		var that = this;
 
-		this.get('logout', { key: this.userinfo.key }, function(data){
-			if ( data.msg == 'success' ) {
+		this.get('logout', { key: this.userinfo.key }, function(data, res){
+			if ( res.msg == 'success' ) {
 				that.setEntryUI();
-				that.userinfo = null;		// 保存数据到功能中
-				that.setCookie(data.key);	// 保存数据到缓存中，持续24小时
+				that.userinfo = null;	// 删除功能数据
+				that.setCookie(null);	// 注销缓存
 			}
 		});
 	}
@@ -114,6 +119,30 @@
 		}
 
 		return key;
+	}
+
+
+	// 进入用户指定功能
+	uxUser.prototype.getFunction = function ( key, callback ) {
+		this.get(key, {
+			userkey: this.userinfo.key
+		}, function(data){
+			console.log(data);
+			if ( callback )
+				callback(data);
+		});
+	}
+
+
+	// 进入用户指定功能
+	uxUser.prototype.setFunction = function ( key, callback ) {
+		this.get(key, {
+			userkey: this.userinfo.key
+		}, function(data){
+			console.log(data);
+			if ( callback )
+				callback(data);
+		});
 	}
 
 

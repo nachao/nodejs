@@ -4,10 +4,13 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
 		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
-		<script type="text/javascript" src="./js/web.comm.js" ></script>
+		<script type="text/javascript" src="./js/comm.js" ></script>
+		<script type="text/javascript" src="./js/user.js" ></script>
+		<script type="text/javascript" src="./js/guess_blindly.js" ></script>
 		<script type="text/javascript">
 
-			var ux = new uxUser();
+			var user = new User(),
+				gb = new GuessBlindly();
 
 		</script>
 	</head>
@@ -16,7 +19,7 @@
 		<!-- 登录和注册 -->
 		<div class="UI entryUI" >
 			<h1>Welcome!</h1>
-			<form id="enteny" onsubmit="return ux.setEntry(this.account.value);" >
+			<form id="enteny" onsubmit="return ux.setEntry({ account: this.account.value });" >
 				<input id="account" type="text" value="" name="account" placeholder="请输入" />
 				<input id="btn" type="button" value="确认" />
 			</form>
@@ -35,13 +38,77 @@
 				<p class="sum">0</p>
 			</div>
 		</div>
+
+		<div class="clear"></div>
+	
+		<!-- 所有功能列表 -->
+		<div class="allUI">
+
+			<!-- 乱猜 -->
+			<div class="itemUI" key="guess_blindly">
+				<div class="area">
+					<p class="name">Guess Blindly</p>
+					<p class="explain">Geocoding请求Success的比例从0.26%小幅上升到0.39%，但是绝大多数请求仍旧是OVER_QUERY_LIMIT。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
+			<!-- 兑换 -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">Exchange</p>
+					<p class="explain">猜一猜，胡乱猜测；在黑暗中的一个镜头；猜测[猜想]没有地面</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- 乱猜 - 内容 -->
+		<div class="contentUI guessblindlyUI" id="guess_blindly" >
+			<div class="hide" id="qb_template" href="javascript:;" title="-" >0</div>
+		</div>
+
+		<!-- 加载界面中 -->
+		<div class="loading hide" id="loading" >加载界面中...</div>
+
 		<script type="text/javascript">
 
-			var key = ux.getUserByCookie();
+			var key = user.getUserByCookie();
 
 			if ( !key ) {
-				ux.setEntryUI();
+				user.setEntryUI();
 			}
+
+
+			function openItem ( el ) {
+				if ( !el.hasClass('itemAct') ) {
+					el.siblings().hide();
+					el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
+						el.find('.close').show();
+						gb.init(user.userinfo.key);
+					});
+				}
+			}
+
+			function closeItem ( el ) {
+				if ( el.hasClass('itemAct') ) {
+					$('.contentUI').hide();
+					el.find('.close').hide();
+					el.removeClass('itemAct').stop().animate({ width: '300px' }, 500, function(){
+						$('.allUI').append(el.siblings().show());
+					});
+				}
+			}
+
+			$('.itemUI').click(function(){
+				// $('#loading').show();
+				openItem($(this));
+
+			});
+			$('.itemUI .close').click(function(){
+				closeItem($(this).parents('.itemUI'));
+				return false;
+			});
 
 		</script>
 	</body>
