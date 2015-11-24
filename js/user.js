@@ -6,7 +6,11 @@ function User ( account ) {
 
 	this.param.cookieAccountKey = 'ux';
 
+	this.param.callback = $.noop;
+
+
 	this.userinfo = {};
+
 
 	this.comm = new Comm();
 }
@@ -66,6 +70,7 @@ User.prototype.setEntryUI = function () {
 	});
 
 	$('.allUI').hide();	// 注销成功后显示功能列表
+	$('.contentUI').hide();	// 隐藏所有功能
 }
 
 
@@ -96,17 +101,39 @@ User.prototype.setEntry = function ( param ) {
 			that.userinfo = data;						// 保存数据到功能中
 			that.setCookie(data.key, 60 * 60 * 24);		// 保存数据到缓存中，持续24小时
 			that.setUserUI(data);
+			that.param.callback();		// 登录成功后执行
 		} else {
 			that.userinfo = null;		// 保存数据到功能中
 			that.setCookie(data.key);	// 保存数据到缓存中，持续24小时
 			that.setEntryUI();
-			alert('请重新登录！');
+			// alert('请重新登录！');
 		}
 
 		$('#loading').hide();
 	}, param);
 
 	return false;
+}
+
+
+// 用户登录注册
+User.prototype.setRight = function ( callback ) {
+	this.param.callback = callback;
+}
+
+
+// 设置用户参数
+User.prototype.getUserInfo = function ( value ) {
+	for ( var key in value ) {
+		this.userinfo[key] = value[key];
+
+		if ( key == 'sum' ) {
+			$('.userUI .sum').html(value[key]);
+		}
+		if ( key == 'name' ) {
+			$('.userUI .name').html(value[key]);
+		}
+	}
 }
 
 

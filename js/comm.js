@@ -16,9 +16,9 @@ Comm.prototype.use = function ( callback, value ) {
 
 	// 多个参数对象型
 	} else if ( typeof(value) == 'object' ) {
-		if ( !value.userkey && user.userinfo.key ) {
-			value.userkey = user.userinfo.key;		
-		}
+		// if ( !value.userkey && user.userinfo.key ) {
+		// 	value.userkey = user.userinfo.key;		
+		// }
 		for ( var k in value ) {
 			data += '&'+ k +'='+ value[k];
 		}

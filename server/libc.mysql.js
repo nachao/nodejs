@@ -85,7 +85,7 @@ DataManagement.prototype.userCreate = function ( account, callback ) {
 		user = {
 			key: this.md5(String(time)),
 			name: account,
-			sum: 100,
+			sum: 10000,
 		},
 		sql = "INSERT INTO `ux73`.`user` (`key`, `name`, `sum`, `create_time`) VALUES ('"+ user.key +"', '"+ user.name +"', '"+ user.sum +"', '"+ time +"');"
 	this.connection.query(sql, function(err) {
@@ -97,7 +97,19 @@ DataManagement.prototype.userCreate = function ( account, callback ) {
 }
 
 
+// 刷新用户积分
+DataManagement.prototype.setSum = function ( key, num, callback ) {
+	var sql = "UPDATE `ux73`.`user` SET `sum`='"+ num +"' WHERE `key`='"+ key +"';";
+	this.connection.query(sql, function(err) {
+		if (err)
+			console.log(err);
+		else
+			if ( callback )
+				callback(key, num);
+	});
+}
 
 
 
 module.exports = new DataManagement();
+
