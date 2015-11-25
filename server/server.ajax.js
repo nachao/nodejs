@@ -14,6 +14,8 @@ function ServerAjax () {
 
 	this.lib.c001 = require('./libc.001');	// --
 
+	this.lib.c002 = require('./libc.002');	// --
+
 	this.lib.mysql = require('./libc.mysql');	// mysql 数据管理
 
 
@@ -120,6 +122,10 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 	// 操作 001
 	} else if ( query._ == '001add' && query.userkey && query.key ) {
 		callback(that.lib.comm.getSuccessData(that.lib.c001.opt(query.userkey, query.key)));
+
+	// 进入功能 002
+	} else if ( query._ == '002' && query.userkey ) {
+		callback(that.lib.comm.getSuccessData(that.lib.c002.get()));
 
 	// 无对应的后台操作
 	} else {

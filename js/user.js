@@ -50,7 +50,7 @@ User.prototype.setUserUI = function ( info ) {
 		that = this;
 
 	el.find('.name').html(info.name || '-');
-	el.find('.sum').html(info.sum || '-');
+	el.find('.sum').html(info.sum || '0');
 	el.find('.logout').one('click', function(){
 		that.setLogout();
 	});

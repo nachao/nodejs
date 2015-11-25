@@ -2,41 +2,134 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<script type="text/javascript" src="socket.js" ></script>
-	</head>
-	<body>
+		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
+		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="../node_modules/socket.io/node_modules/socket.io-client/socket.io.js" ></script>
+		<script type="text/javascript" src="./js/comm.js" ></script>
+		<script type="text/javascript" src="./js/user.js" ></script>
+		<script type="text/javascript" src="./js/guess_blindly.js" ></script>
 		<script type="text/javascript">
 
-			var socket = io.connect();
+			var user = new User(),
+				ux001 = null;
 
-			socket.on('message', function(data){
+		</script>
+	</head>
+	<body>
 
-				console.log('服务器发来信息：', data);
+		<!-- 登录和注册 -->
+		<div class="UI entryUI" >
+			<h1>Welcome!</h1>
+			<form id="enteny" onsubmit="return user.setEntry({ account: this.account.value });" >
+				<input id="account" type="text" value="" name="account" placeholder="请输入" />
+				<input id="btn" type="button" value="确认" />
+			</form>
+		</div>
 
-				// socket.send('我是客户端');
+		<!-- 登录和注册 -->
+		<div class="UI userUI">
+			<div class="icon">
+				<img src="./img/avatar.jpg" />
+			</div>
+			<div class="info">
+				<p class="account">
+					<span class="name">-</span>
+					<a class="logout" href="javascript:;" >注销</a>
+				</p>
+				<p class="sum">0</p>
+			</div>
+			<div class="clear"></div>
+		</div>
 
+		<div class="clear"></div>
+	
+		<!-- 所有功能列表 -->
+		<div class="allUI">
+
+			<!-- // -->
+			<div class="itemUI" id="ux001" key="guess_blindly">
+				<div class="area">
+					<p class="name">#001 - Guess blindly</p>
+					<p class="explain">新平台后台的逆地理编码有问题 location:test priority:critical status:new type:bug</p>
+					<a class="close" href="javascript:;" >退出</a>
+					<div class="line"></div>
+				</div>
+			</div>
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#002 - On-hook</p>
+					<p class="explain">终端39E2800455在上周日的一段5分钟的行程飞出了5万公里，超过赤道周长</p>
+					<a class="close" href="javascript:;" >退出</a>
+					<div class="line"></div>
+				</div>
+			</div>
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#998</p>
+					<p class="explain">Geocoding请求OVER_QUERY_LIMIT的情况仍旧非常严重 location:live type:enhancement</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<!-- 乱猜 - 内容 -->
+		<div class="contentUI guessblindlyUI" id="guess_blindly" >
+			<div class="hide" id="qb_template" href="javascript:;" title="-" ><em></em><span>-</span></div>
+		</div>
+
+		<!-- 加载界面中 -->
+		<div class="loading hide" id="loading" >加载界面中...</div>
+
+		<script type="text/javascript">
+
+			var key = user.getUserByCookie();
+
+			// 登录成功后，初始化全部功能
+			user.setRight(function(){
+				ux001 = new GuessBlindly();
 			});
 
-			socket.on('disconnect', function(){
-				console.log('与服务器断开连接');
+			if ( !key ) {
+				user.setEntryUI();
+			}
+
+
+			function openItem ( el ) {
+				if ( !el.hasClass('itemAct') ) {
+					el.siblings().hide();
+					el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
+						el.find('.close').show();
+						if ( el.attr('key') == 'guess_blindly' ) {
+							ux001.init(user.userinfo.key);
+						}
+					});
+				}
+			}
+
+			function closeItem ( el ) {
+				if ( el.hasClass('itemAct') ) {
+					$('.contentUI').hide();
+					el.find('.close').hide();
+					el.removeClass('itemAct').stop().animate({ width: '300px' }, 500, function(){
+						$('.allUI').append(el.siblings().show());
+					});
+				}
+			}
+
+			$('.itemUI').click(function(){
+				// $('#loading').show();
+				openItem($(this));
+
 			});
-
-			socket.on('send nickname', function(userinfo){
-				console.log('我的信息：', userinfo);
+			$('.itemUI .close').click(function(){
+				closeItem($(this).parents('.itemUI'));
+				return false;
 			});
-
-
-			// socket.on('login', '账号')
-
-			socket.on('say success', function(msg){
-				console.log('留言板:', msg);
-			});
-
-			// socket.emit('test', {a:1,b:2,c:function(){}}, function(data){
-			// 	console.log('对方确认收到数据，并执行回调后返回的参数：', data);
-			// });
-
-			// console.log(socket);
 
 		</script>
 	</body>

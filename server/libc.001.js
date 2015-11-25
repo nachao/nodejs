@@ -2,51 +2,39 @@
 // 未命名
 function GuessBlindly () {
 
-
+	// 所有选项信息
 	this.record = {};
 
+	// 所有参数
 	this.param = {};
 
-	this.param.answer = 0;
-
-	this.param.endTime = 0;
-
-	this.param.startTime = 0;
-
-	this.param.totalTime = 1 * 30 * 1000;	// 60s
-
-	this.param.restTime = 1 * 10 * 1000;	// 10s
-
-
-	// 所有选项信息
-	this.guess = {};
-
-
-
-	// 所有进入此功能中的用户数据
+	// 所有进入此功能中的用户数据，每轮结束后清空
 	this.users = {};
 
-
-
+	// 所有模板
 	this.lib = {};
 
-	this.lib.sio = require('socket.io');
 
-	this.lib.comm = require('./core');	// --
 
-	this.lib.mysql = require('./libc.mysql');	// --
 
+	// 初始化数据
+	this.initData();
+
+	// 初始化模板
+	this.initLib();
+
+
+
+	// 初始化模板 - 数据库
 	this.lib.mysql.init();
 
+	// this.res = null;
+
+	// console.log('01');
 
 
-	this.init();
-
-	this.res = null;
-
-
-
-	this.setStart();
+	// 开启功能
+	this.setOpen();
 
 	// var that = this;
 
@@ -55,8 +43,19 @@ function GuessBlindly () {
 }
 
 
-// 初始化
-GuessBlindly.prototype.init = function () {
+// 初始化数据
+GuessBlindly.prototype.initData = function () {
+
+	this.param.answer = 0;
+
+	this.param.endTime = 0;
+
+	this.param.startTime = 0;
+
+	this.param.totalTime = 30 * 60 * 1000;	// 30min
+
+	this.param.restTime = 1 * 60 * 1000;	// 1min
+
 	for ( var i = 1; i <= 9; i++ ) {
 		this.record[i] = {
 			number: 0,
@@ -64,6 +63,25 @@ GuessBlindly.prototype.init = function () {
 			user: {}
 		};
 	}
+}
+
+
+// 初始化引用使用到的模板
+GuessBlindly.prototype.initLib = function () {
+
+	this.lib.sio = require('socket.io');
+
+	this.lib.comm = require('./core');	// --
+
+	this.lib.mysql = require('./libc.mysql');	// --
+
+}
+
+
+// 初始化功能
+GuessBlindly.prototype.initFun = function () {
+
+	console.log(111);
 }
 
 
@@ -79,19 +97,20 @@ GuessBlindly.prototype.setReset = function () {
 
 
 // 选择
-GuessBlindly.prototype.opt = function ( userkey, key ) {
-	this.record[key].number += 1;
+GuessBlindly.prototype.setOpt = function ( userkey, key ) {
+	var opt = this.record[key];
 
-	if ( this.record[key].user[userkey] ) {
-		this.record[key].user[userkey].a += 1;
+	// 判断用户是否有选择过此选项
+	if ( opt.user[userkey] ) {
+		opt.user[userkey] += 1;
 	} else {
-		this.record[key].user[userkey] = {
-			a: 1,
-			b: 0
-		};
+		opt.user[userkey] = 1;
 	}
 
-	return this.record[key];
+	// 此选项总量
+	opt.number += 1;
+
+	return opt;
 }
 
 
@@ -107,8 +126,39 @@ GuessBlindly.prototype.get = function () {
 }
 
 
+// 判断用户是否有参与过本轮
+GuessBlindly.prototype.isJoin = function ( userkey ) {
+	return !!this.users[userkey];
+}
+
+
+// 获取指定的参与者
+GuessBlindly.prototype.getActor = function ( userkey ) {
+	return this.users[userkey];
+}
+
+
+// 保存指定的参与者
+GuessBlindly.prototype.addActor = function ( userinfo ) {
+	this.users[userinfo.key] = userinfo;
+	return userinfo;
+}
+
+
+// 设置指定的参与者参数
+GuessBlindly.prototype.setActor = function ( userkey, param ) {
+	var user = this.users[userkey];
+	if ( user ) {
+		for ( var k in param ) {
+			user[k] = param[k];
+		}
+	}
+	return user;
+}
+
+
 // 开始计时
-GuessBlindly.prototype.setStart = function () {
+GuessBlindly.prototype.setOpen = function () {
 	var that = this;
 
 	that.param.startTime = new Date().getTime();
@@ -121,15 +171,15 @@ GuessBlindly.prototype.setStart = function () {
 	}, that.param.totalTime);
 
 	// 下一轮开始
-	clearInterval(that.param.inverval);
-	that.param.inverval = setInterval(function(){
-		that.setStart();
+	// clearInterval(that.param.inverval);
+	// that.param.inverval = setInterval(function(){
+	// 	that.setStart();
 
-		// 初始化
-		that.init();
-		that.res.emit('initialise', that.getAll(true));
-		that.res.broadcast.emit('initialise', that.getAll(true));
-	}, that.param.totalTime + that.param.restTime);
+	// 	// 初始化
+	// 	that.initData();
+	// 	that.res.emit('initialise', that.getAll(true));
+	// 	that.res.broadcast.emit('initialise', that.getAll(true));
+	// }, that.param.totalTime + that.param.restTime);
 }
 
 
@@ -145,57 +195,77 @@ GuessBlindly.prototype.getAll = function ( data ) {
 }
 
 
-// 获取
-GuessBlindly.prototype.socket = function ( server ) {
+// 获取倒计时信息
+GuessBlindly.prototype.getCountdown = function ( data ) {
+	return {
+		status: this.param.endTime > new Date().getTime(),
+		startTime: this.param.startTime,
+		endTime: this.param.endTime,
+		totalTime: this.param.totalTime
+	}
+}
+
+
+// 设置此功能为长链接
+GuessBlindly.prototype.openServer = function ( server ) {
 
 	var socket = this.lib.sio.listen(server);
 
 	var that = this;
 
-	var result = null;
 
+	// 此功能的所有事件在此定义
 	socket.on('connection', function(res){
 
-		that.res = res;
-
-		// that.begin();
-
 		// 进入时保存用户数据
-		res.on('Identity', function(userinfo){
-			that.users[userinfo.key] = userinfo;
-		});
+		// res.on('Identity', function(userinfo){
+		// 	that.users[userinfo.key] = userinfo;
+		// });
 
 		// 返回给单个用户倒计时数据
 		res.on('get count down', function(){
-			that.res.emit('set count down', that.getAll());
+			res.emit('set count down', that.getCountdown());
 		});
 
 		// 返回给单个用户界面数据
 		res.on('get interface data', function(){
-			that.res.emit('set interface data', that.getAll(true));
+			res.emit('set interface data', that.getAll(true));
 		});
 
 		// 进行选择
-		res.on('opt guess blindly', function(data){
-			var user = that.users[data.userkey],
+		res.on('set an option', function(data){
+			var user = that.getActor(data.user.key),
 				item = null;
 
-			if ( user && user.sum > 0 ) {
-				item = that.opt(data.userkey, data.key);
+			// 如果已经参加过，则获取保存的用户信息
+			// 如果此用户尚未参加过，则保存用户信息
+			if ( !user ) {
+				user = that.addActor(data.user);
+			}
 
-				user.sum -= 1;	// 修改服务器缓存数据
-				that.lib.mysql.setSum(user.key, user.sum, function(){	// 修改数据库用户积分
+			// 如果用户满足条件，则设置选项和用户参数
+			if ( user && user.sum > 0 ) {
+
+				item = that.setOpt(user.key, data.key);
+				user = that.setActor(user.key, {
+					sum: user.sum - 1
+				});
+
+				// 刷新用户积分
+				that.lib.mysql.setSum(user.key, user.sum, function(){
 					res.emit('send userinfo sum', user.sum);
 				});
+
+				// 发布选项信息
 				res.emit('send guess blindly item', item);
 				res.broadcast.emit('send guess blindly item', item);
 			}
 		});
 
 		// 获取个人得
-		res.on('get my income', function(userkey){
-			that.users[userkey] = userinfo;
-		});
+		// res.on('get my income', function(userkey){
+		// 	that.users[userkey] = userinfo;
+		// });
 
 		// 离开提示
 		res.on('disconnect', function(){
@@ -203,8 +273,8 @@ GuessBlindly.prototype.socket = function ( server ) {
 		});
 
 		// 链接提示
-		console.log('open 001...!');
-		res.send('welcome to 001.');
+		console.log('open 001!');
+		// res.send('welcome to 001.');
 	});
 }
 

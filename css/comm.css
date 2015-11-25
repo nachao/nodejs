@@ -140,7 +140,7 @@ p{
 
 
 .contentUI{
-	display: inline-block;
+	display: none;
 }
 
 
@@ -186,11 +186,32 @@ p{
 .guessblindlyUI .temp-act span{
 	background-color: red;
 }
+.guessblindlyUI .warn{
+	display: none;
+	color: #666;
+	margin-top: 15px;
+	float: left;
+	background-color: #eee;
+	border-radius: 3px;
+	padding: 3px 10px;
+}
 
 
 
 
-
+.ux002UI .area{
+	width: 100px;
+	height: 10px;
+}
+.ux002UI .area .line{
+	display: inline-block;
+	width: 10%;
+	height: 100%;
+	background-color: #ccc;
+}
+.ux002UI .panel{
+	margin-top: 20px;
+}
 
 
 

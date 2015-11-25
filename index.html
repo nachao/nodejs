@@ -7,7 +7,8 @@
 		<script type="text/javascript" src="../node_modules/socket.io/node_modules/socket.io-client/socket.io.js" ></script>
 		<script type="text/javascript" src="./js/comm.js" ></script>
 		<script type="text/javascript" src="./js/user.js" ></script>
-		<script type="text/javascript" src="./js/guess_blindly.js" ></script>
+		<script type="text/javascript" src="./js/web.001.js" ></script>
+		<script type="text/javascript" src="./js/web.002.js" ></script>
 		<script type="text/javascript">
 
 			var user = new User(),
@@ -47,9 +48,9 @@
 		<div class="allUI">
 
 			<!-- // -->
-			<div class="itemUI" id="ux001" key="guess_blindly">
+			<div class="itemUI" key="ux001">
 				<div class="area">
-					<p class="name">#1001</p>
+					<p class="name">#001 - Guess blindly</p>
 					<p class="explain">新平台后台的逆地理编码有问题 location:test priority:critical status:new type:bug</p>
 					<a class="close" href="javascript:;" >退出</a>
 					<div class="line"></div>
@@ -57,11 +58,12 @@
 			</div>
 
 			<!-- // -->
-			<div class="itemUI">
+			<div class="itemUI" key="ux002">
 				<div class="area">
-					<p class="name">cloudhawk_server_3.3</p>
+					<p class="name">#002 - On-hook</p>
 					<p class="explain">终端39E2800455在上周日的一段5分钟的行程飞出了5万公里，超过赤道周长</p>
 					<a class="close" href="javascript:;" >退出</a>
+					<div class="line"></div>
 				</div>
 			</div>
 
@@ -76,9 +78,21 @@
 			<div class="clear"></div>
 		</div>
 
-		<!-- 乱猜 - 内容 -->
+		<!-- 001 - 内容 -->
 		<div class="contentUI guessblindlyUI" id="guess_blindly" >
-			<div class="hide" id="qb_template" href="javascript:;" title="-" ><em></em><span>-</span></div>
+			<div class="area">
+				<div class="hide" id="qb_template" href="javascript:;" title="-" ><em></em><span>-</span></div>
+			</div>
+			<div class="warn">● Integral problem, can not participate in!</div>
+		</div>
+
+		<!-- 002 - 内容 -->
+		<div class="contentUI ux002UI" id="ux002" >
+			<div class="area"><span class="line"></span></div>
+			<div class="panel">
+				<span class="number">0</span>
+				<a href="javascript:;" >taken</a>
+			</div>
 		</div>
 
 		<!-- 加载界面中 -->
@@ -88,10 +102,17 @@
 
 			var key = user.getUserByCookie();
 
+			var ux002 = null;
+
+
+
+
 			// 登录成功后，初始化全部功能
 			user.setRight(function(){
 				ux001 = new GuessBlindly();
+				ux002 = new
 			});
+
 
 			if ( !key ) {
 				user.setEntryUI();
@@ -103,8 +124,11 @@
 					el.siblings().hide();
 					el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
 						el.find('.close').show();
-						if ( el.attr('key') == 'guess_blindly' ) {
+						if ( el.attr('key') == 'ux001' ) {
 							ux001.init(user.userinfo.key);
+						}
+						if ( el.attr('key') == 'ux002' ) {
+							ux002.init(user.userinfo.key);
 						}
 					});
 				}
@@ -123,7 +147,6 @@
 			$('.itemUI').click(function(){
 				// $('#loading').show();
 				openItem($(this));
-
 			});
 			$('.itemUI .close').click(function(){
 				closeItem($(this).parents('.itemUI'));
