@@ -9,33 +9,20 @@
 function ServerWeb () {
 
 
-
-	this.lib = {};
-
-	this.lib.c001 = require('./libc.001');	// --
-	
-	// 引用专属功能
-	this.comm = require('./core');
-
-
+	this.lib = require('../funs');
 
 	this.init();
 
+	console.log('node web...');
 }
 
 
 ServerWeb.prototype.init = function(first_argument) {
-
-	// 引用全部会使用到的模块
-	var url = require('url');
-
-	var http = require("http");
-
 	var that = this;
 
 	// 创建服务对象
-	var server = http.createServer(function(req, res){
-		var info = url.parse(req.url, true);	// 用户请求的参数
+	var server = that.lib.http.createServer(function(req, res){
+		var info = that.lib.url.parse(req.url, true);	// 用户请求的参数
 
 		if ( req.url =="/favicon.ico" ) {
 			return;
@@ -48,12 +35,18 @@ ServerWeb.prototype.init = function(first_argument) {
 			res.end(html, form);
 		});
 
-	}).listen(8080, "localhost");	// 开启服务端口
 
-	this.lib.c001.socket(server);
+	// 开启服务端口
+	}).listen(8080, "localhost", function(){
+		console.log('localhost:8080...');
 
-	// 提示
-	console.log('Server...!');
+		// 开启功能
+		that.lib.ux001.init(server);
+
+		that.lib.ux002.init();
+	});	
+
+
 };
 
 
@@ -62,12 +55,11 @@ ServerWeb.prototype.init = function(first_argument) {
 ServerWeb.prototype.getHtml = function ( name, callback ) {
 
 	var that = this,
-		fs = require('fs'),
-		file = this.comm.getFilePath(name);
+		file = that.lib.comm.getFilePath(name);
 
-	fs.exists(file.name, function(exists){
+	that.lib.fs.exists(file.name, function(exists){
 		if ( exists ) {
-			fs.readFile( file.name, file.form, function(err, result){
+			that.lib.fs.readFile( file.name, file.form, function(err, result){
 				if ( err )
 					that.getHtml('/errer', callback);
 				else if ( callback ) 

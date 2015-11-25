@@ -1,15 +1,17 @@
 
 // 数据库管理
-function DataManagement () {
+function Mysql () {
 
 	this.connection = null;
 
 	// this.connection = this.initMysql();
+
+	console.log('new lib.mysql...');
 }
 
 
 // 编码为md5
-DataManagement.prototype.md5 = function ( value ) {
+Mysql.prototype.md5 = function ( value ) {
 	var Buffer = require("buffer").Buffer;
 	var buf = new Buffer(value);
 	var str = buf.toString("binary");
@@ -19,7 +21,7 @@ DataManagement.prototype.md5 = function ( value ) {
 
 
 // 链接数据库
-DataManagement.prototype.init = function () {
+Mysql.prototype.init = function () {
 	var mysql = require('mysql'),
 		connection = mysql.createConnection({
 			host     : 'localhost',
@@ -31,7 +33,7 @@ DataManagement.prototype.init = function () {
 			if (err) {
 				console.error('mysql no!: ' + err.stack);
 			} else {
-				console.log('Mysql...!');
+				console.log('Mysql.prototype.init...');
 			}
 		});
 
@@ -41,7 +43,7 @@ DataManagement.prototype.init = function () {
 
 
 // 根据key获取用户信息
-DataManagement.prototype.userSelectByKey = function ( key, callback ) {
+Mysql.prototype.userSelectByKey = function ( key, callback ) {
 	var sql = "SELECT `key`, `name`, `sum` FROM ux73.user where `key` = '"+ key +"';";
 	this.connection.query(sql, function(err, rows) {
 		if (err)
@@ -54,7 +56,7 @@ DataManagement.prototype.userSelectByKey = function ( key, callback ) {
 
 
 // 判断用户是的存在，如果存在则返回用户信息
-DataManagement.prototype.userSelect = function ( account, callback ) {
+Mysql.prototype.userSelect = function ( account, callback ) {
 	var sql = "SELECT `key`, `name`, `sum` FROM ux73.user where `name` = '"+ account +"';";
 	this.connection.query(sql, function(err, rows) {
 		if (err)
@@ -67,7 +69,7 @@ DataManagement.prototype.userSelect = function ( account, callback ) {
 
 
 // 设置用户状态
-DataManagement.prototype.setUserStatus = function ( key, status, callback ) {
+Mysql.prototype.setUserStatus = function ( key, status, callback ) {
 	var sql = "UPDATE `ux73`.`user` SET `status`='"+ status +"' WHERE `key`='"+ key +"';";
 	this.connection.query(sql, function(err, rows) {
 		if (err)
@@ -80,7 +82,7 @@ DataManagement.prototype.setUserStatus = function ( key, status, callback ) {
 
 
 // 创建用户
-DataManagement.prototype.userCreate = function ( account, callback ) {
+Mysql.prototype.userCreate = function ( account, callback ) {
 	var time = new Date().getTime(),
 		user = {
 			key: this.md5(String(time)),
@@ -98,7 +100,7 @@ DataManagement.prototype.userCreate = function ( account, callback ) {
 
 
 // 刷新用户积分
-DataManagement.prototype.setSum = function ( key, num, callback ) {
+Mysql.prototype.setSum = function ( key, num, callback ) {
 	var sql = "UPDATE `ux73`.`user` SET `sum`='"+ num +"' WHERE `key`='"+ key +"';";
 	this.connection.query(sql, function(err) {
 		if (err)
@@ -111,5 +113,5 @@ DataManagement.prototype.setSum = function ( key, num, callback ) {
 
 
 
-module.exports = new DataManagement();
+module.exports = new Mysql();
 

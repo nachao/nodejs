@@ -36,8 +36,7 @@ function GuessBlindly () {
 
 	this.lib.mysql = require('./libc.mysql');	// --
 
-	this.lib.mysql.init();
-
+	this.lib.mysql = this.lib.comm.mysql;
 
 
 	this.init();
@@ -158,6 +157,8 @@ GuessBlindly.prototype.socket = function ( server ) {
 
 		that.res = res;
 
+		// console.log("socket.on('connection', function(res){");
+
 		// that.begin();
 
 		// 进入时保存用户数据
@@ -230,8 +231,10 @@ GuessBlindly.prototype.setRight = function () {
 	}
 
 	// 公布
-	this.res.emit('reveal answer', that.param.answer, winner.user);
-	this.res.broadcast.emit('send ux001', winner.user, winner.user);
+	if ( this.res && this.res.emit ) {
+		this.res.emit('reveal answer', that.param.answer, winner.user);
+		this.res.broadcast.emit('reveal answer', winner.user, winner.user);
+	}
 }
 
 

@@ -7,21 +7,21 @@
 */
 function ServerAjax () {
 
-	this.lib = {};
+	this.lib = require('../funs');
 
 	// 引用专属功能
-	this.lib.comm = require('./core');
+	// this.lib.comm = require('./core');
 
-	this.lib.c001 = require('./libc.001');	// --
+	// this.lib.c001 = require('./libc.001');	// --
 
-	this.lib.mysql = require('./libc.mysql');	// mysql 数据管理
-
+	// this.lib.mysql = require('./libc.mysql');	// mysql 数据管理
 
 
 	this.lib.mysql.init();
 
-
 	this.init();
+
+	console.log('node ajax...');
 }
 
 
@@ -59,10 +59,10 @@ ServerAjax.prototype.init = function(first_argument) {
 			res.end();
 		});
 
-	}).listen(8081, "localhost");	// 开启服务端口
+	}).listen(8081, "localhost", function(){
 
-	// 提示
-	console.log('Ajax...!');
+		console.log('localhost:8081...');
+	});	// 开启服务端口
 }
 
 
@@ -73,13 +73,11 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 		callback = callback || function (){};
 
 	// 缓存登录
-	if ( query._ == 'entry' && query.userkey ) {
-		that.lib.mysql.userSelectByKey(query.userkey, function(data){	// 根据Key获取用户信息
+	if ( query.cache ) {	// query._ == 'entry' && 
+		that.lib.mysql.userSelectByKey(query.cache, function(data){	// 根据Key获取用户信息
 			if ( data ) {
 				that.lib.comm.saveUserData(data);
-				// console.log('entry - data:', data);
-				// console.log('entry - data,key:', data.key);
-				that.lib.mysql.setUserStatus(query.userkey, '1');		// 设置用户为在线状态
+				that.lib.mysql.setUserStatus(query.cache, '1');		// 设置用户为在线状态
 				result = that.lib.comm.getSuccessData(data);
 			} else {
 				result = that.lib.comm.getErrerData();
@@ -88,7 +86,7 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 		});
 
 	// 登录或注册
-	} else if ( query._ == 'entry' && query.account ) {
+	} else if ( query.account ) {	// query._ == 'entry' && 
 		that.lib.mysql.userSelect(query.account, function(data){	// 根据Name获取用户信息
 			if ( data ) {
 				that.lib.comm.saveUserData(data);
@@ -115,11 +113,11 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 
 	// 进入功能 001
 	} else if ( query._ == '001' && query.userkey ) {
-		callback(that.lib.comm.getSuccessData(that.lib.c001.get()));
+		callback(that.lib.comm.getSuccessData(that.lib.ux001.getRecord()));
 
 	// 操作 001
 	} else if ( query._ == '001add' && query.userkey && query.key ) {
-		callback(that.lib.comm.getSuccessData(that.lib.c001.opt(query.userkey, query.key)));
+		callback(that.lib.comm.getSuccessData(that.lib.ux001.opt(query.userkey, query.key)));
 
 	// 无对应的后台操作
 	} else {
