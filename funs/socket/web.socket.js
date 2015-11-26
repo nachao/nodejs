@@ -5,6 +5,9 @@ function Socket () {
 	this.lib = funs;
 
 	this.socket = io.connect('localhost:8080');
+
+
+	this.socket.emit('init');
 }
 
 
@@ -23,12 +26,17 @@ Socket.prototype.init = function () {
 
 // 获取指定的数据
 Socket.prototype.get = function ( key, callback ) {
-	this.socket.on(key, callback);
+	this.socket.on(key, function(data){
+		data = JSON.parse(data);
+
+		if ( callback )
+			callback(data);
+	});
 }
 
 
 // 设置指定的数据
-Socket.prototype.set = function ( key, data ) {
+Socket.prototype.send = function ( key, data ) {
 	this.socket.emit(key, data);
 }
 

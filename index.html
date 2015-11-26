@@ -105,13 +105,19 @@
 			funs.ui = new UI();
 			funs.user = new User();
 
-			// 登录成功后
-			funs.user.setRight(function(){
+			// 登录后执行
+			funs.user.entrySuccess(function(){
 
 				// 引用模块功能
 				funs.ux001 = new Ux001();
 				funs.ux002 = new Ux002();
 			});
+
+			// 注销后执行
+			funs.user.logoutSuccess(function(){
+				funs.ux002.login();
+			});
+
 
 
 			// 如果有缓存则登录，没有则打开登录界面

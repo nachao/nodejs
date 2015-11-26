@@ -27,7 +27,7 @@ Comm.prototype.use = function ( callback, value ) {
 		url: 'http://localhost:8081',
 		data: data,
 		success: function ( res ) {
-			console.log(res);
+			// console.log(res);
 			res = JSON.parse(res);
 			if ( callback )
 				callback(res.data, res);

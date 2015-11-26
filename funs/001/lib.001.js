@@ -92,12 +92,12 @@ Ux001.prototype.init = function ( socket ) {
 
 	// 离开提示
 	socket.open(function(userkey){
-		console.log('---- connection ux001 ---- open');
+		// console.log('---- open ux001', userkey);
 	});
 
 	// 链接提示
-	socket.close(function(){
-		console.log('---- connection ux001 ---- close');
+	socket.close(function(userkey){
+		// console.log('---- close ux001', userkey);
 	});
 
 

@@ -6,7 +6,12 @@ function User ( account ) {
 
 	this.param.cookieAccountKey = 'ux';
 
-	this.param.callback = $.noop;
+
+	// 登陆成功后执行
+	this.param.entry = $.noop;
+
+	// 注销后执行
+	this.param.logout = $.noop;
 
 
 	this.userinfo = {};
@@ -98,6 +103,7 @@ User.prototype.setLogout = function () {
 	this.comm.use(function(data, res){
 		if ( res.msg == 'success' ) {
 			that.setEntryUI();
+			that.param.logout();	// 注销时执行
 			that.userinfo = null;	// 删除功能数据
 			that.setCookie(null);	// 注销缓存
 		}
@@ -110,17 +116,6 @@ User.prototype.setLogout = function () {
 // 用户登录注册
 User.prototype.setEntry = function ( param ) {
 	var that = this;
-	
-	// var data = {};
-
-	// if ( param.userkey ) {
-	// 	data = {
-	// 		_: 'entry',
-	// 		userkey: 
-	// 	}
-	// }
-
-	// param._ = 'entry';
 
 	$('#loading').show();
 
@@ -129,7 +124,7 @@ User.prototype.setEntry = function ( param ) {
 			that.userinfo = data;						// 保存数据到功能中
 			that.setCookie(data.key, 60 * 60 * 24);		// 保存数据到缓存中，持续24小时
 			that.setUserUI(data);
-			that.param.callback();		// 登录成功后执行
+			that.param.entry();			// 登录成功后执行
 		} else {
 			that.userinfo = null;		// 保存数据到功能中
 			that.setCookie(data.key);	// 保存数据到缓存中，持续24小时
@@ -145,8 +140,14 @@ User.prototype.setEntry = function ( param ) {
 
 
 // 用户登录注册
-User.prototype.setRight = function ( callback ) {
-	this.param.callback = callback;
+User.prototype.entrySuccess = function ( callback ) {
+	this.param.entry = callback;
+}
+
+
+// 用户登录注册
+User.prototype.logoutSuccess = function ( callback ) {
+	this.param.logout = callback;
 }
 
 

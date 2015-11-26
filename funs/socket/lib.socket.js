@@ -42,6 +42,15 @@ Socket.prototype.init = function (server) {
 	socket.on('connection', function(res){
 		var userkey = res.handshake.headers.cookie,
 			key = null;
+			
+		console.log('-----------------', new Date());
+		console.log(userkey);
+
+		if ( userkey.indexOf('ux=') >= 0 ) {
+			userkey = userkey.substr(userkey.indexOf('ux=') +3);
+		} else {
+			userkey = '';
+		}
 
 		// 设置获取前端的信息
 		for ( key in that.gets ) {
@@ -77,8 +86,8 @@ Socket.prototype.get = function ( key, callback ) {
 
 
 // 设置指定的数据
-Socket.prototype.set = function ( key, data ) {
-	this.sets[key] = callback;
+Socket.prototype.send = function ( key, data ) {
+	this.sets[key] = data;
 }
 
 
