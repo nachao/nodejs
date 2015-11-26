@@ -26,7 +26,7 @@ UI.prototype.initFunsBtn = function () {
 		var el = $(this);
 
 		if ( !el.hasClass('itemAct') ) {
-			el.siblings().hide();
+			el.siblings('.itemUI').hide();
 			el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
 				el.find('.close').show();
 				that.lib[el.attr('key')].init();

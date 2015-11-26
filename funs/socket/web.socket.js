@@ -25,13 +25,8 @@ Socket.prototype.init = function () {
 
 
 // 获取指定的数据
-Socket.prototype.get = function ( key, callback ) {
-	this.socket.on(key, function(data){
-		data = JSON.parse(data);
-
-		if ( callback )
-			callback(data);
-	});
+Socket.prototype.on = function ( key, callback ) {
+	this.socket.on(key, callback);
 }
 
 

@@ -42,22 +42,34 @@ Comm.prototype.getUserData = function ( userkey ) {
 
 
 // 遍历成功数据
-Comm.prototype.getSuccessData = function ( data ) {
-	return JSON.stringify({
+Comm.prototype.successData = function ( data ) {
+	return {
 		status: 200,
 		msg: 'success',
 		data: data
-	});
+	};
 }
 
 
 // 遍历成功数据
-Comm.prototype.getErrerData = function ( data ) {
-	return JSON.stringify({
+Comm.prototype.errerData = function ( data ) {
+	return {
 		status: 404,
 		msg: 'errer',
 		data: ''
-	});
+	};
+}
+
+
+// 遍历成功数据为JSON
+Comm.prototype.successJSON = function ( data ) {
+	return JSON.stringify(this.successData(data));
+}
+
+
+// 遍历成功数据为JSON
+Comm.prototype.errerJSON = function ( data ) {
+	return JSON.stringify(this.errerData(data));
 }
 
 

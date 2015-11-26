@@ -127,6 +127,7 @@ p{
 	border-left-color: white;
 	border-right-color: white;
 	background-color: transparent;
+	margin-bottom: 0px;
 }
 .itemAct .explain{
 	height: 22px;
@@ -141,6 +142,7 @@ p{
 
 .contentUI{
 	display: none;
+	margin-top: 1px;
 }
 
 
@@ -198,20 +200,6 @@ p{
 
 
 
-
-.ux002UI .area{
-	width: 100px;
-	height: 10px;
-}
-.ux002UI .area .line{
-	display: inline-block;
-	width: 10%;
-	height: 100%;
-	background-color: #ccc;
-}
-.ux002UI .panel{
-	margin-top: 20px;
-}
 
 
 

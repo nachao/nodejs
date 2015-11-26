@@ -17,6 +17,8 @@ function Socket () {
 
 	this.closes = [];
 
+	this.res = null;
+
 
 
 	/*
@@ -42,6 +44,8 @@ Socket.prototype.init = function (server) {
 	socket.on('connection', function(res){
 		var userkey = res.handshake.headers.cookie,
 			key = null;
+
+		that.res = res;
 			
 		console.log('-----------------', new Date());
 		console.log(userkey);
@@ -64,6 +68,8 @@ Socket.prototype.init = function (server) {
 
 		// 断开执行
 		res.on('disconnect', function(data){
+			that.res = null;
+
 			for ( key = 0; key < that.closes.length; key++ ) {
 				that.closes[key](userkey);
 			}
@@ -80,14 +86,18 @@ Socket.prototype.init = function (server) {
 
 
 // 获取指定的数据
-Socket.prototype.get = function ( key, callback ) {
+Socket.prototype.on = function ( key, callback ) {
 	this.gets[key] = callback;
 }
 
 
 // 设置指定的数据
 Socket.prototype.send = function ( key, data ) {
-	this.sets[key] = data;
+	if ( this.res ) {
+		this.res.emit(key, data);
+	} else {
+		this.sets[key] = data;
+	}
 }
 
 

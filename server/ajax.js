@@ -29,7 +29,7 @@ function ServerAjax () {
 
 
 	// 简单外部方法
-	this.success = this.lib.comm.getSuccessData;
+	this.success = this.lib.comm.successJSON;
 
 	// 提示
 	console.log('node ajax...');
@@ -92,9 +92,9 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 			if ( data ) {
 				that.lib.comm.saveUserData(data);
 				that.lib.mysql.setUserStatus(query.cache, '1');		// 设置用户为在线状态
-				result = that.lib.comm.getSuccessData(data);
+				result = that.lib.comm.successJSON(data);
 			} else {
-				result = that.lib.comm.getErrerData();
+				result = that.lib.comm.errerJSON();
 			}
 			callback(result);
 		});
@@ -105,13 +105,13 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 			if ( data ) {
 				that.lib.comm.saveUserData(data);
 				that.lib.mysql.setUserStatus(query.userkey, '1');		// 设置用户为在线状态
-				callback(that.lib.comm.getSuccessData(data));
+				callback(that.lib.comm.successJSON(data));
 			} else {
 				that.lib.mysql.userCreate(query.account, function(data){	// 如果没获取到，则根据给定的账户名创建新账号
 					if ( data ) {
-						result = that.lib.comm.getSuccessData(data);
+						result = that.lib.comm.successJSON(data);
 					} else {
-						result = that.lib.comm.getErrerData();
+						result = that.lib.comm.errerJSON();
 					}
 					callback(result);
 				});
@@ -122,16 +122,16 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 	} else if ( query.logout ) {
 		that.lib.mysql.setUserStatus(query.logout, '0', function(){
 			that.lib.comm.deleteUserData(query.logout);
-			callback(that.lib.comm.getSuccessData());
+			callback(that.lib.comm.successJSON());
 		});
 
 	// 进入功能 001
 	} else if ( query._ == '001' && query.userkey ) {
-		callback(that.lib.comm.getSuccessData(that.lib.ux001.getRecord()));
+		callback(that.lib.comm.successJSON(that.lib.ux001.getRecord()));
 
 	// 操作 001
 	} else if ( query._ == '001add' && query.userkey && query.key ) {
-		callback(that.lib.comm.getSuccessData(that.lib.ux001.opt(query.userkey, query.key)));
+		callback(that.lib.comm.successJSON(that.lib.ux001.opt(query.userkey, query.key)));
 
 	// 进入功能 002
 	} else if ( query.ux002 ) {
@@ -149,7 +149,7 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 
 	// 无对应的后台操作
 	} else {
-		callback(that.lib.comm.getErrerData());
+		callback(that.lib.comm.errerJSON());
 	}
 
 }
