@@ -91,8 +91,17 @@ User.prototype.setLogout = function () {
 // 用户登录注册
 User.prototype.setEntry = function ( param ) {
 	var that = this;
+	
+	// var data = {};
 
-	param._ = 'entry';
+	// if ( param.userkey ) {
+	// 	data = {
+	// 		_: 'entry',
+	// 		userkey: 
+	// 	}
+	// }
+
+	// param._ = 'entry';
 
 	$('#loading').show();
 
@@ -142,7 +151,7 @@ User.prototype.getUserByCookie = function () {
 	var key = this.getCookie();
 
 	if ( key ) {
-		this.setEntry({ userkey: key });
+		this.setEntry({ cache: key });
 	} else {
 		this.setEntryUI();
 	}
