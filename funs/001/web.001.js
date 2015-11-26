@@ -1,236 +1,199 @@
 
-// 猜
-function Ux001 () {
+
+function Ux001 ( account ) {
+
+	this.comm = new Comm();
 
 
-	// this.record = {};
-
-	// this.param = {};
-
-	// this.param.answer = 0;
-
-	// this.param.endTime = 0;
-
-	// this.param.startTime = 0;
-
-	// this.param.totalTime = 1 * 30 * 1000;	// 60s
-
-	// this.param.restTime = 1 * 10 * 1000;	// 10s
+	this.lib = funs;
 
 
-	// 所有选项信息
-	this.guess = {};
+	this.data = null;
 
 
 
-	// 所有进入此功能中的用户数据
-	this.users = {};
 
-
-
-	this.lib = {};
-
-	// this.lib.sio = require('socket.io');
-
-	// this.lib.comm = require('./core');	// --
-
-	// this.lib.mysql = require('./libc.mysql');	// --
-
-	// this.lib.mysql = this.lib.comm.mysql;
-
-
-
-	console.log('web.001...');
-}
-
-/*
-
-// 初始化
-Ux001.prototype.init = function () {
-	for ( var i = 1; i <= 9; i++ ) {
-		this.record[i] = {
-			number: 0,
-			key: i,
-			user: {}
-		};
-	}
+	// this.initSocket();
 }
 
 
-// 重置
-Ux001.prototype.setReset = function () {
-	for ( var key in this.record ) {
-		this.record[key].number = 0;
-		this.record[key].user = {};
-	}
+// 长连接
+Ux001.prototype.initSocket = function () {
 
-	return this.record;
-}
+	// var socket = io.connect('localhost:8080');
 
-
-// 选择
-Ux001.prototype.opt = function ( userkey, key ) {
-	this.record[key].number += 1;
-
-	if ( this.record[key].user[userkey] ) {
-		this.record[key].user[userkey].a += 1;
-	} else {
-		this.record[key].user[userkey] = {
-			a: 1,
-			b: 0
-		};
-	}
-
-	return this.record[key];
-}
-
-
-// 获取所有选项的数量
-Ux001.prototype.get = function () {
-	var result = [];
-
-	for ( var key in this.record ) {
-		result.push(this.record[key].number);
-	}
-
-	return result;
-}
-
-
-// 开始计时
-Ux001.prototype.setStart = function () {
 	var that = this;
 
-	that.param.startTime = new Date().getTime();
-	that.param.endTime = that.param.startTime + that.param.totalTime;
-	that.param.answer = parseInt(Math.random() * 9) || 9;
+	// 进入登记
+	// socket.emit('Identity', this.user.get(), function(){});
+
+	// socket.on('message', function(data){
+	// 	console.log('server.web::', data);
+	// });
+
+	// 获取倒计时请求
+	that.lib.socket.set('get count down');	
+
+	that.lib.socket.get('disconnect', function(){
+		socket.emit('disconnect', '123');
+		console.log('与服务器断开连接');
+	});
+
+	// 刷新用户积分
+	that.lib.socket.get('send userinfo sum', function(number){
+		that.lib.user.getUserInfo({
+			sum: number
+		});
+
+		if ( number <= 0 ) {
+			$('#guess_blindly .warn').show();
+		} else {
+			$('#guess_blindly .warn').hide();
+		}
+	})
+
+	// 获取到单个数据后的操作
+	that.lib.socket.get('send guess blindly item', function(data){
+		$('.temp[key='+ data.key +']').find('span').html(data.number);
+	});
+
+	// 界面样式
+	that.lib.socket.get('set interface data', function(data){
+
+		// 设置每个选项的选择数量
+		for ( var key in data.record ) {
+			$('.temp[key='+ key +']').find('span').html(data.record[key].number);
+		}
+	});
+
+	// 倒计时样式
+	that.lib.socket.get('set count down', function(data){
+		if ( data.status ) {
+
+			// 设置时间倒数计时效果
+			var time = data.endTime - new Date().getTime(),
+				el = $('#ux001 .line');
+
+			el.show().css({ width: (new Date().getTime() - data.startTime) / data.totalTime * 100 + '%', backgroundColor: '' });
+			el.stop().animate({ height: '2px' }).animate({ width: '100%' }, time, 'linear', function(){
+				$(this).hide();
+			});
+		}
+	});
+
+	// 初始化界面
+	that.lib.socket.get('initialise', function(data){
+
+		if ( !data.status ) {
+			return;
+
+		} else {
+
+			// 设置每个选项的选择数量
+			for ( var key in data.record ) {
+				$('.temp[key='+ key +']').removeClass('temp-act').find('span').html(data.record[key].number);
+			}
+
+			// 设置时间倒数计时效果
+			var time = data.endTime - new Date().getTime(),
+				el = $('#ux001 .line');
+
+			el.show().css({ width: (new Date().getTime() - data.startTime) / data.totalTime * 100 + '%', backgroundColor: '' });
+			el.stop().animate({ height: '2px' }).animate({ width: '100%' }, time, 'linear', function(){
+				$(this).hide();
+			});
+		}
+	});
 
 	// 公布
-	that.param.timeout = setTimeout(function(){
-		that.setRight();
-	}, that.param.totalTime);
+	that.lib.socket.get('reveal answer', function(key, data){
+		$('.temp[key='+ data.key +']').addClass('temp-act');
 
-	// 下一轮开始
-	clearInterval(that.param.inverval);
-	that.param.inverval = setInterval(function(){
-		that.setStart();
-
-		// 初始化
-		that.init();
-		that.res.emit('initialise', that.getAll(true));
-		that.res.broadcast.emit('initialise', that.getAll(true));
-	}, that.param.totalTime + that.param.restTime);
-}
-
-
-// 获取状态信息
-Ux001.prototype.getAll = function ( data ) {
-	return {
-		record: data ? this.record : null,
-		status: this.param.endTime > new Date().getTime(),
-		startTime: this.param.startTime,
-		endTime: this.param.endTime,
-		totalTime: this.param.totalTime
-	}
-}
-
-
-// 获取
-Ux001.prototype.socket = function ( server ) {
-
-	var socket = this.lib.sio.listen(server);
-
-	var that = this;
-
-	var result = null;
-
-	socket.on('connection', function(res){
-
-		that.res = res;
-
-		// console.log("socket.on('connection', function(res){");
-
-		// that.begin();
-
-		// 进入时保存用户数据
-		res.on('Identity', function(userinfo){
-			that.users[userinfo.key] = userinfo;
-		});
-
-		// 返回给单个用户倒计时数据
-		res.on('get count down', function(){
-			that.res.emit('set count down', that.getAll());
-		});
-
-		// 返回给单个用户界面数据
-		res.on('get interface data', function(){
-			that.res.emit('set interface data', that.getAll(true));
-		});
-
-		// 进行选择
-		res.on('opt guess blindly', function(data){
-			var user = that.users[data.userkey],
-				item = null;
-
-			if ( user && user.sum > 0 ) {
-				item = that.opt(data.userkey, data.key);
-
-				user.sum -= 1;	// 修改服务器缓存数据
-				that.lib.mysql.setSum(user.key, user.sum, function(){	// 修改数据库用户积分
-					res.emit('send userinfo sum', user.sum);
-				});
-				res.emit('send guess blindly item', item);
-				res.broadcast.emit('send guess blindly item', item);
-			}
-		});
-
-		// 获取个人得
-		res.on('get my income', function(userkey){
-			that.users[userkey] = userinfo;
-		});
-
-		// 离开提示
-		res.on('disconnect', function(){
-			console.log('close 001...!');
-		});
-
-		// 链接提示
-		console.log('open 001...!');
-		res.send('welcome to 001.');
+		if ( data[that.lib.user.get('key')] ) {
+			that.lib.user.getUserInfo({
+				sum: that.lib.user.get('sum') + data[that.lib.user.get('key')].b
+			});
+		}
 	});
 }
 
 
-// 处理所有正确用户
-Ux001.prototype.setRight = function () {
+// 进入用户指定功能
+Ux001.prototype.opt = function ( value, userkey, callback ) {
+	this.comm.use(function(data){
+		if ( callback )
+			callback(data);
+	},{
+		_: '001add',
+		key: value,
+		userkey: userkey
+	});
+}
 
-	var key = null,
-		total = 0,
-		winner = this.record[this.param.answer],
-		that = this,
-		user = null;
 
-	for ( key in this.record ) {
-		total += this.record[key].number;
-	}
+// 让当前用户持续点击
+Ux001.prototype.analogClick = function () {
+	var key = parseInt(Math.random() * 9) || 1,
+		that = this;
 
-	for ( key in winner.user ) {
-		winner.user[key].b = parseInt(winner.user[key].a / winner.number * total);
+	$('.temp[key='+ key +']').click();
 
-		user = that.users[key];
-		that.lib.mysql.setSum(key, user.sum + winner.user[key].b);
-	}
-
-	// 公布
-	if ( this.res && this.res.emit ) {
-		this.res.emit('reveal answer', that.param.answer, winner.user);
-		this.res.broadcast.emit('reveal answer', winner.user, winner.user);
+	if ( that.lib.user.get('sum') > 0 ) {
+		setTimeout(function(){
+			that.analogClick();
+		}, 1000);
 	}
 }
 
-*/
 
+// 进入用户指定功能
+Ux001.prototype.init = function () {
+	var that = this;
 
+	// 获取规格
+	this.comm.use(function(data){
+		var main = $('#guess_blindly').show();
 
-module.exports = new Ux001();
+		var areaEl = main.find('.area'),
+			warnEl = areaEl.find('.warn');
+
+		areaEl.find('.temp').remove();
+
+		$(data).each(function(key, val){
+			var temp = $('#qb_template').clone();
+			key += 1;
+
+			temp.attr('title', key).attr('key', key).show().addClass('temp').removeAttr('id');
+			temp.click(function(){
+				if ( that.lib.user.sum() > 0 ) {
+					that.lib.socket.set('set an option', {
+						key: key,
+						user: that.lib.user.info()
+					});
+					warnEl.hide();
+				} else {
+					console.warn('sum not enough!');
+					warnEl.show();
+				}
+			});
+			areaEl.append(temp);
+		});
+
+		// 获取数据
+		// that.socket.emit('get guess blindly');
+
+		// 获取界面数据
+		that.lib.socket.set('get interface data');
+
+		// 判断用户是否可用
+		if ( that.lib.user.sum() <= 0 ) {
+			$('#guess_blindly .warn').show();
+		} else {
+			$('#guess_blindly .warn').hide();
+		}
+	}, {
+		_:'001',
+		userkey: that.lib.user.key()
+	});
+}
 

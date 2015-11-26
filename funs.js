@@ -24,11 +24,11 @@ function Funs () {
 	*
 	*	private
 	*/
-	this.comm = require('./funs/comm/lib.comm');
+	// this.comm = require('./funs/comm/lib.comm');
 
-	this.user = require('./funs/user/lib.user');
+	// this.user = require('./funs/user/lib.user');
 
-	this.mysql = require('./funs/mysql/lib.mysql');
+	// this.mysql = require('./funs/mysql/lib.mysql');
 
 
 	/*
@@ -41,7 +41,7 @@ function Funs () {
 	this.ux002 = require('./funs/002/lib.002');
 
 
-	console.log('new funs...');
+	// console.log('new funs...');
 }
 
 

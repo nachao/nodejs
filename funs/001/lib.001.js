@@ -46,12 +46,14 @@ function Ux001 () {
 
 	this.lib.mysql = require('../mysql/lib.mysql');
 
+	this.lib.socket = null;
+
 
 	/*
 	*  引用node模板
 	*  private
 	*/
-	this.lib.sio = require('socket.io');
+	// this.lib.sio = require('socket.io');
 
 
 
@@ -82,10 +84,28 @@ function Ux001 () {
 
 
 // 获取
-Ux001.prototype.init = function ( server ) {
+Ux001.prototype.init = function ( socket ) {
 
-	var socket = this.lib.sio.listen(server);
+	// var socket = this.lib.sio.listen(server);
 
+	this.lib.socket = socket;
+
+	// 离开提示
+	socket.open(function(userkey){
+		console.log('---- connection ux001 ---- open');
+	});
+
+	// 链接提示
+	socket.close(function(){
+		console.log('---- connection ux001 ---- close');
+	});
+
+
+
+
+	// res.send('welcome to 001.');
+
+/*
 	var that = this;
 
 	socket.on('connection', function(res){
@@ -106,7 +126,7 @@ Ux001.prototype.init = function ( server ) {
 		});
 
 		// 进行选择
-		res.on('opt guess blindly', function(data){
+		res.on('set an option', function(data){
 			var user = that.users[data.userkey],
 				item = null;
 
@@ -128,7 +148,8 @@ Ux001.prototype.init = function ( server ) {
 		});
 
 		// 离开提示
-		res.on('disconnect', function(){
+		res.on('disconnect', function(data){
+			console.log(res.handshake.headers.cookie);
 			console.log('---- connection ux001 ---- close');
 		});
 
@@ -137,7 +158,8 @@ Ux001.prototype.init = function ( server ) {
 		res.send('welcome to 001.');
 	});
 
-	console.log('Ux001.prototype.init...');
+*/
+	// console.log('Ux001.prototype.init...');
 }
 
 

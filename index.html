@@ -6,22 +6,18 @@
 		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
 		<script type="text/javascript" src="../node_modules/socket.io/node_modules/socket.io-client/socket.io.js" ></script>
 		<script type="text/javascript" src="./funs/comm/web.comm.js" ></script>
-		<script type="text/javascript" src="./js/user.js" ></script>
-		<script type="text/javascript" src="./js/web.001.js" ></script>
-		<script type="text/javascript" src="./js/web.002.js" ></script>
-		<script type="text/javascript">
-
-			var user = new User(),
-				ux001 = null;
-
-		</script>
+		<script type="text/javascript" src="./funs/ui/web.ui.js" ></script>
+		<script type="text/javascript" src="./funs/user/web.user.js" ></script>
+		<script type="text/javascript" src="./funs/socket/web.socket.js" ></script>
+		<script type="text/javascript" src="./funs/001/web.001.js" ></script>
+		<script type="text/javascript" src="./funs/002/web.002.js" ></script>
 	</head>
 	<body>
 
 		<!-- 登录和注册 -->
 		<div class="UI entryUI" >
 			<h1>Welcome!</h1>
-			<form id="enteny" onsubmit="return user.setEntry({ account: this.account.value });" >
+			<form id="enteny" >
 				<input id="account" type="text" value="" name="account" placeholder="请输入" />
 				<input id="btn" type="button" value="确认" />
 			</form>
@@ -100,58 +96,31 @@
 
 		<script type="text/javascript">
 
-			var key = user.getUserByCookie();
+			// 全部功能
+			var funs = {};
 
-			var ux002 = null;
+			// 引用公共功能
+			funs.socket = new Socket();
+			funs.comm = new Comm();
+			funs.ui = new UI();
+			funs.user = new User();
 
+			// 登录成功后
+			funs.user.setRight(function(){
 
-
-
-			// 登录成功后，初始化全部功能
-			user.setRight(function(){
-				ux001 = new GuessBlindly();
-				ux002 = new
+				// 引用模块功能
+				funs.ux001 = new Ux001();
+				funs.ux002 = new Ux002();
 			});
 
 
-			if ( !key ) {
-				user.setEntryUI();
+			// 如果有缓存则登录，没有则打开登录界面
+			if ( !funs.user.getUserByCookie() ) {
+				funs.user.setEntryUI();
 			}
 
-
-			function openItem ( el ) {
-				if ( !el.hasClass('itemAct') ) {
-					el.siblings().hide();
-					el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
-						el.find('.close').show();
-						if ( el.attr('key') == 'ux001' ) {
-							ux001.init(user.userinfo.key);
-						}
-						if ( el.attr('key') == 'ux002' ) {
-							ux002.init(user.userinfo.key);
-						}
-					});
-				}
-			}
-
-			function closeItem ( el ) {
-				if ( el.hasClass('itemAct') ) {
-					$('.contentUI').hide();
-					el.find('.close').hide();
-					el.removeClass('itemAct').stop().animate({ width: '300px' }, 500, function(){
-						$('.allUI').append(el.siblings().show());
-					});
-				}
-			}
-
-			$('.itemUI').click(function(){
-				// $('#loading').show();
-				openItem($(this));
-			});
-			$('.itemUI .close').click(function(){
-				closeItem($(this).parents('.itemUI'));
-				return false;
-			});
+			// 初始化功能进入按钮
+			funs.ui.initFunsBtn();
 
 		</script>
 	</body>

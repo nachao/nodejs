@@ -2,7 +2,6 @@
 
 function Comm ( account ) {
 
-	this.param = {};
 }
 
 
@@ -10,15 +9,8 @@ function Comm ( account ) {
 Comm.prototype.use = function ( callback, value ) {
 	var data = '';
 
-	// 两个参数型
-	if ( typeof(value) == 'string' && user.userinfo.key ) {
-		data += '_='+ value +'&userkey='+ user.userinfo.key;
-
 	// 多个参数对象型
-	} else if ( typeof(value) == 'object' ) {
-		// if ( !value.userkey && user.userinfo.key ) {
-		// 	value.userkey = user.userinfo.key;		
-		// }
+	if ( typeof(value) == 'object' ) {
 		for ( var k in value ) {
 			if ( data ) {
 				data += '&';
@@ -31,28 +23,17 @@ Comm.prototype.use = function ( callback, value ) {
 		return;
 	}
 
-	// console.log(value, data);
-
 	$.ajax({
 		url: 'http://localhost:8081',
 		data: data,
 		success: function ( res ) {
+			console.log(res);
 			res = JSON.parse(res);
 			if ( callback )
 				callback(res.data, res);
 		}
 	});
 }
-
-
-// 进入用户指定功能
-Comm.prototype.getFunction = function ( key, callback ) {
-	this.use(function(data){
-		if ( callback )
-			callback(data);
-	}, key);
-}
-
 
 
 

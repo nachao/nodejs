@@ -45,8 +45,8 @@ Comm.prototype.getUserData = function ( userkey ) {
 Comm.prototype.getSuccessData = function ( data ) {
 	return JSON.stringify({
 		status: 200,
-		data: data,
-		msg: 'success'
+		msg: 'success',
+		data: data
 	});
 }
 
@@ -55,8 +55,8 @@ Comm.prototype.getSuccessData = function ( data ) {
 Comm.prototype.getErrerData = function ( data ) {
 	return JSON.stringify({
 		status: 404,
-		data: '',
-		msg: 'errer'
+		msg: 'errer',
+		data: ''
 	});
 }
 

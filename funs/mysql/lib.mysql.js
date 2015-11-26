@@ -21,7 +21,7 @@ Mysql.prototype.md5 = function ( value ) {
 
 
 // 链接数据库
-Mysql.prototype.init = function () {
+Mysql.prototype.init = function ( callback ) {
 	var mysql = require('mysql'),
 		connection = mysql.createConnection({
 			host     : 'localhost',
@@ -29,13 +29,16 @@ Mysql.prototype.init = function () {
 			password : 'nachao',
 			database : 'ux73'
 		});
-		connection.connect(function(err) {
-			if (err) {
-				console.error('mysql no!: ' + err.stack);
-			} else {
-				console.log('Mysql.prototype.init...');
-			}
-		});
+
+	connection.connect(function(err) {
+		if (err) {
+			console.error('mysql no!: ' + err.stack);
+		} else {
+			console.log('Mysql.prototype.init...');
+			if ( callback )
+				callback(connection);
+		}
+	});
 
 	this.connection = connection;
 	return connection;

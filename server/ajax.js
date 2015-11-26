@@ -9,10 +9,29 @@ function ServerAjax () {
 
 	this.lib = require('../funs');
 
+
+	/*
+	* 	引用自定义公共模板
+	*
+	*	private
+	*/
+	this.lib.comm = require('../funs/comm/lib.comm');
+
+	this.lib.user = require('../funs/user/lib.user');
+
+	this.lib.mysql = require('../funs/mysql/lib.mysql');
+
+	
+
 	this.lib.mysql.init();
 
 	this.init();
 
+
+	// 简单外部方法
+	this.success = this.lib.comm.getSuccessData;
+
+	// 提示
 	console.log('node ajax...');
 }
 
@@ -33,8 +52,6 @@ ServerAjax.prototype.init = function(first_argument) {
 		var info = url.parse(req.url, true),
 			query = info.query;	// 用户请求的参数
 
-		console.log(query);
-
 		if ( req.url =="/favicon.ico" ) {
 			return;
 		}
@@ -47,6 +64,11 @@ ServerAjax.prototype.init = function(first_argument) {
 
 		// 调用专属功能 - 获取并判断用户操作
 		that.getUse(info.query, function(data){
+
+			console.log('-----------------', new Date());
+			console.log(query);
+			console.log(data);
+
 			res.write(data);
 			res.end();
 		});
@@ -97,9 +119,9 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 		});
 
 	// 退出登录
-	} else if ( query._ == 'logout' && query.userkey ) {
-		that.lib.mysql.setUserStatus(query.userkey, '0', function(){
-			that.lib.comm.deleteUserData(query.userkey);
+	} else if ( query.logout ) {
+		that.lib.mysql.setUserStatus(query.logout, '0', function(){
+			that.lib.comm.deleteUserData(query.logout);
 			callback(that.lib.comm.getSuccessData());
 		});
 
@@ -112,8 +134,18 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 		callback(that.lib.comm.getSuccessData(that.lib.ux001.opt(query.userkey, query.key)));
 
 	// 进入功能 002
-	} else if ( query._ == '002' && query.userkey ) {
-		callback(that.lib.comm.getSuccessData(that.lib.c002.get()));
+	} else if ( query.ux002 ) {
+		var ux002 = that.lib.ux002,
+			userkey = query.ux002;
+
+		ux002.getDayLog(userkey, function(data){
+			if ( !data ) {
+				data = ux002.addDayLog(userkey);	// 如果是当日首次登录则创建记录并返回记录信息
+			} else if ( data.time_start == '0' ) {
+				ux002.updateEntry(userkey);			// 如果是当日再次登录则刷新记录
+			}
+			callback(that.success(data));
+		});
 
 	// 无对应的后台操作
 	} else {
