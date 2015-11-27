@@ -8,7 +8,16 @@ function User ( account ) {
 
 
 	// 登陆成功后执行
+	this.param.begin = $.noop;
+
+	// 登陆成功后执行
+	this.param.end = $.noop;
+
+	// 登陆成功后执行
 	this.param.entry = $.noop;
+
+	// 登陆失败
+	this.param.failed = $.noop;
 
 	// 注销后执行
 	this.param.logout = $.noop;
@@ -18,7 +27,23 @@ function User ( account ) {
 
 
 	this.comm = new Comm();
+
+	this.lib = funs;
+
+
+
+	// 如果有缓存则登录，没有则打开登录界面
+	this.cookieEntry();
+
+	// 初始化部分事件
+	this.entryStart();
+
+	this.entryFailed();
+
+	this.entryEnd();
 }
+
+
 
 
 // 显示指定的界面
@@ -42,8 +67,14 @@ User.prototype.info = function () {
 
 
 // 显示指定的界面
-User.prototype.key = function () {
-	return this.userinfo.key;
+User.prototype.uid = function () {
+	return this.userinfo.uid;
+}
+
+
+// 显示指定的界面
+User.prototype.name = function () {
+	return this.userinfo.name || '-';
 }
 
 
@@ -53,62 +84,25 @@ User.prototype.sum = function ( value ) {
 		this.userinfo.sum = value;
 		$('.userUI .sum').html(value[key]);
 	}
-
-	return this.userinfo.sum;
+	return this.userinfo.sum || '0';
 }
 
 
-// 显示指定的界面
-User.prototype.getInitUI = function ( key ) {
-	$('.UI').hide();
 
-	return $('.'+ key +'UI').show();
-}
-
-
-// 修改页面用户信息
-User.prototype.setUserUI = function ( info ) {
-	var el = this.getInitUI('user'),	
-		that = this;
-
-	el.find('.name').html(info.name || '-');
-	el.find('.sum').html(info.sum || '0');
-	el.find('.logout').one('click', function(){
-		that.setLogout();
-	});
-
-	$('.allUI').show();	// 登录成功后显示功能列表
-}
-
-
-// 设置登录注册界面
-User.prototype.setEntryUI = function () {
-	var el = this.getInitUI('entry'),
-		that = this;
-
-	el.find('#account').val('');
-	el.find('#btn').unbind('click').bind('click', function(){
-		that.setEntry({ account: el.find('#account').val() });
-	});
-
-	$('.allUI').hide();	// 注销成功后显示功能列表
-	$('.contentUI').hide();	// 隐藏所有功能
-}
 
 
 // 用户注销
 User.prototype.setLogout = function () {
 	var that = this;
 
-	this.comm.use(function(data, res){
-		if ( res.msg == 'success' ) {
-			that.setEntryUI();
-			that.param.logout();	// 注销时执行
+	that.comm.on(function(res){
+		if ( res.status == '200' ) {
+			that.param.logout();
 			that.userinfo = null;	// 删除功能数据
-			that.setCookie(null);	// 注销缓存
+			that.delCookie();	// 注销缓存
 		}
 	}, {
-		logout: that.key()
+		logout: that.uid()
 	});
 }
 
@@ -117,39 +111,78 @@ User.prototype.setLogout = function () {
 User.prototype.setEntry = function ( param ) {
 	var that = this;
 
-	$('#loading').show();
+	that.param.begin();
 
-	this.comm.use(function(data){
-		if ( data && data.key ) {
-			that.userinfo = data;						// 保存数据到功能中
-			that.setCookie(data.key, 60 * 60 * 24);		// 保存数据到缓存中，持续24小时
-			that.setUserUI(data);
-			that.param.entry();			// 登录成功后执行
+	that.comm.on(function(res){
+
+		// 后台返回登陆成功时
+		if ( res.status == '200' ) {
+			that.userinfo = res.data;						// 保存数据到功能中
+			that.setCookie(res.data.uid, res.data.key);		// 保存数据到缓存中，持续24小时
+			that.param.entry();
+
+		// 后台返回登陆失败时
 		} else {
-			that.userinfo = null;		// 保存数据到功能中
-			that.setCookie(data.key);	// 保存数据到缓存中，持续24小时
-			that.setEntryUI();
-			// alert('请重新登录！');
+			that.userinfo = null;
+			that.delCookie(null);
+			that.param.failed(res.msg);
 		}
 
-		$('#loading').hide();
+		that.param.end();
+
 	}, param);
 
 	return false;
 }
 
 
-// 用户登录注册
+// 登陆确认时执行
+User.prototype.entryStart = function ( callback ) {
+	var that = this;
+
+	callback = callback || function(){
+		that.lib.ui.load(true);
+	};
+
+	this.param.begin = callback;
+}
+
+
+// 用户登录注册成功后执行
 User.prototype.entrySuccess = function ( callback ) {
 	this.param.entry = callback;
 }
 
 
-// 用户登录注册
+// 用户登录失败后执行
+User.prototype.entryFailed = function ( callback ) {
+	var that = this;
+
+	callback = callback || function(msg){
+		that.lib.ui.text(msg);
+		that.lib.ui.toEntry();
+	};
+
+	this.param.failed = callback;
+}
+
+
+// 登陆完成时执行
+User.prototype.entryEnd = function ( callback ) {
+	var that = this;
+
+	callback = callback || function(){
+		that.lib.ui.load(false);
+	};
+
+	this.param.end = callback;
+}
+
+
+// 用户注销成功后执行
 User.prototype.logoutSuccess = function ( callback ) {
 	this.param.logout = callback;
 }
-
 
 // 设置用户参数
 User.prototype.getUserInfo = function ( value ) {
@@ -167,37 +200,45 @@ User.prototype.getUserInfo = function ( value ) {
 
 
 // 获取用户缓存数据
-User.prototype.getUserByCookie = function () {
-	var key = this.getCookie();
+User.prototype.cookieEntry = function () {
+	var value = this.getCookie();
 
-	if ( key ) {
-		this.setEntry({ cache: key });
-	} else {
-		this.setEntryUI();
+	if ( value ) {
+		this.setEntry({ cache: value.uid, key: value.key });
 	}
+}
 
-	return key;
+
+// 删cookies
+User.prototype.delCookie = function () {
+	document.cookie = this.param.cookieAccountKey + "=null;expires=" + new Date().toGMTString();
 }
 
 
 // 写cookies
-User.prototype.setCookie = function ( value, time, key ) {
-	key = key || this.param.cookieAccountKey;
-	time = time || 0;
+User.prototype.setCookie = function ( uid, key ) {
 	var exp = new Date();
-	exp.setTime(exp.getTime() + time * 1000);
-	document.cookie = key + "="+ escape(value) + ";expires=" + exp.toGMTString();
+
+	exp.setTime(exp.getTime() + (60 * 60 * 24 * 1000));
+
+	document.cookie = this.param.cookieAccountKey + '='+ uid +"&"+ key +";expires=" + exp.toGMTString();
 }
 
 
 // 读取cookies
 User.prototype.getCookie = function ( key ){
 	key = key || this.param.cookieAccountKey;
-	var arr,
+	var arr, val,
 		reg = new RegExp("(^| )"+ key +"=([^;]*)(;|$)");
-	if ( arr = document.cookie.match( reg ) )
-		return unescape(arr[2]);
-	else
+
+	if ( arr = document.cookie.match( reg ) ) {
+		val = String(arr[2]).split('&');
+		return {
+			uid: val[0],
+			key: val[1]
+		};
+	} else {
 		return null;
+	}
 }
 

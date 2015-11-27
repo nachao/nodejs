@@ -5,70 +5,65 @@ function Ux002 () {
 	this.lib = funs;
 
 
-	this.initSocket();
+	this.initEvent();
 
 }
 
 
-// 初始化
+// 进入界面 - 初始化显示数据 
 Ux002.prototype.init = function () {
 	var that = this;
 
-	// this.lib.comm.use(function(data){
-
-	// 	console.log(data);
-
-	// }, {
-	// 	ux002: this.lib.user.key()
-	// });
-
-
-
-
-	// 向后台请求数据
-	this.lib.socket.send('get data', this.lib.user.key());
-
-	// console.log('Ux002.prototype.init...');
-
-
+	that.lib.comm.on(function(res){
+		that.setCartoon(res.data);
+	}, {
+		ux002: that.lib.user.uid()
+	});
 }
 
 
-// 长连接
-Ux002.prototype.initSocket = function () {
+// 进入界面 - 界面事件
+Ux002.prototype.initEvent = function () {
 	var that = this;
 
+	// 领取按钮
+	$('#ux002 .taken').click(function(){
+		that.getIntegral();
+	})
 
-	// 获取初始化数据
-	this.lib.socket.on('data', function(res){
-		// console.log(res);
-		var data = res.data,
-			number = parseInt(data.total / 60 / 15);
+}
 
-		var all = 60 * 15,
-			has = data.total - number * all,
-			not = all - has;
 
-		var el = $('#ux002').show();
+// 循环动画
+Ux002.prototype.setCartoon = function ( data ) {
+	var that = this;
 
-		el.find('.number').html(number)
-		el.find('.line').stop().css({ width: (has / all * 100) + '%' }).animate({ width: '100%' }, not * 1000, 'linear');
+	var el = $('#ux002').show();
+
+	var once = 60,
+		number = parseInt(data.total / once);
+
+	var all = once,
+		has = data.total - number * all,
+		not = all - has;
+
+	el.find('.number').html(number)
+	el.find('.line').stop().css({ width: (has / all * 100) + '%' }).animate({ width: '100%' }, not * 1000, 'linear', function(){
+		data.total += not;
+		that.setCartoon(data);
 	});
-
-
-	// 获取初始化数据
-	// that.lib.socket.get('data', function(res){
-	// 	console.log('---------');
-	// 	console.log(res, parseInt(res.data.total / 60), '分钟');
-
-	// 	// socket.set('data', '服务端你好！');
-	// });
-
-	// console.log('Ux002.prototype.initSocket...');
 }
 
 
-// 长连接
-Ux002.prototype.login = function () {
-	this.lib.socket.send('logout', this.lib.user.key());
+// 领取
+Ux002.prototype.getIntegral = function () {
+	this.lib.socket.send('get integral', this.lib.user.uid());
 }
+
+
+
+
+
+
+
+

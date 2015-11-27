@@ -7,6 +7,8 @@
 */
 function ServerAjax () {
 
+
+
 	this.lib = require('../funs');
 
 
@@ -15,13 +17,12 @@ function ServerAjax () {
 	*
 	*	private
 	*/
-	this.lib.comm = require('../funs/comm/lib.comm');
+	// this.lib.comm = require('../funs/comm/lib.comm');
 
-	this.lib.user = require('../funs/user/lib.user');
+	// this.lib.user = require('../funs/user/lib.user');
 
-	this.lib.mysql = require('../funs/mysql/lib.mysql');
+	// this.lib.mysql = require('../funs/mysql/lib.mysql');
 
-	
 
 	this.lib.mysql.init();
 
@@ -33,6 +34,7 @@ function ServerAjax () {
 
 	// 提示
 	console.log('node ajax...');
+
 }
 
 
@@ -44,6 +46,8 @@ ServerAjax.prototype.init = function(first_argument) {
 		http = require("http");
 
 	var that = this;
+
+	this.lib.a = 2;
 
 
 	// 创建服务对象
@@ -77,6 +81,7 @@ ServerAjax.prototype.init = function(first_argument) {
 
 		console.log('localhost:8081...');
 	});	// 开启服务端口
+
 }
 
 
@@ -87,43 +92,31 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 		callback = callback || function (){};
 
 	// 缓存登录
-	if ( query.cache ) {	// query._ == 'entry' && 
-		that.lib.mysql.userSelectByKey(query.cache, function(data){	// 根据Key获取用户信息
-			if ( data ) {
-				that.lib.comm.saveUserData(data);
-				that.lib.mysql.setUserStatus(query.cache, '1');		// 设置用户为在线状态
-				result = that.lib.comm.successJSON(data);
-			} else {
-				result = that.lib.comm.errerJSON();
+	if ( query.cache ) {
+		that.lib.user.keyEntry(query.cache, query.key, function(res){	// 根据Key获取用户信息
+			if ( res.status == 200 ) {
+				that.lib.ux002.setOnline(res.data.uid);		// 通知功能
 			}
-			callback(result);
+			callback(JSON.stringify(res));
 		});
 
 	// 登录或注册
-	} else if ( query.account ) {	// query._ == 'entry' && 
-		that.lib.mysql.userSelect(query.account, function(data){	// 根据Name获取用户信息
-			if ( data ) {
-				that.lib.comm.saveUserData(data);
-				that.lib.mysql.setUserStatus(query.userkey, '1');		// 设置用户为在线状态
-				callback(that.lib.comm.successJSON(data));
-			} else {
-				that.lib.mysql.userCreate(query.account, function(data){	// 如果没获取到，则根据给定的账户名创建新账号
-					if ( data ) {
-						result = that.lib.comm.successJSON(data);
-					} else {
-						result = that.lib.comm.errerJSON();
-					}
-					callback(result);
-				});
+	} else if ( query.account ) {
+		that.lib.user.nameEntry(query.account, function(res){
+			if ( res.status == 200 ) {
+				that.lib.ux002.setOnline(res.data.uid);		// 通知功能
 			}
+			callback(JSON.stringify(res));
 		});
 
 	// 退出登录
 	} else if ( query.logout ) {
-		that.lib.mysql.setUserStatus(query.logout, '0', function(){
-			that.lib.comm.deleteUserData(query.logout);
-			callback(that.lib.comm.successJSON());
-		});
+		that.lib.user.setLogout(query.logout, function(res){
+			if ( res.status == 200 ) {
+				that.lib.ux002.setOffline(query.logout);	// 通知功能
+			}
+			callback(JSON.stringify(res));
+		})
 
 	// 进入功能 001
 	} else if ( query._ == '001' && query.userkey ) {
@@ -135,16 +128,25 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 
 	// 进入功能 002
 	} else if ( query.ux002 ) {
-		var ux002 = that.lib.ux002,
-			userkey = query.ux002;
+		// var ux002 = that.lib.ux002,
+		// 	userkey = query.ux002;
 
-		ux002.getDayLog(userkey, function(data){
-			if ( !data ) {
-				data = ux002.addDayLog(userkey);	// 如果是当日首次登录则创建记录并返回记录信息
-			} else if ( data.time_start == '0' ) {
-				ux002.updateEntry(userkey);			// 如果是当日再次登录则刷新记录
-			}
-			callback(that.success(data));
+		// ux002.getDayLog(userkey, function(data){
+		// 	if ( !data ) {
+		// 		data = ux002.addDayLog(userkey);	// 如果是当日首次登录则创建记录并返回记录信息
+		// 	} else if ( data.time_start == '0' ) {
+		// 		ux002.updateEntry(userkey);			// 如果是当日再次登录则刷新记录
+		// 	}
+		// 	callback(that.success(data));
+		// });
+
+		console.log(' ----------- get into', query.ux002);
+
+		that.lib.ux002.getLog(query.ux002, function(data){
+			that.lib.ux002.updateValue(query.ux002, data, function(data){
+				callback(that.lib.comm.successJSON(data));
+				console.log(' --- data', data);
+			});
 		});
 
 	// 无对应的后台操作
@@ -153,9 +155,6 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 	}
 
 }
-
-
-
 
 
 module.exports = new ServerAjax();

@@ -89,46 +89,70 @@
 			<div class="area"><span class="line"></span></div>
 			<div class="panel">
 				<span class="number">0</span>
-				<a href="javascript:;" >taken</a>
+				<a class="taken" href="javascript:;" >taken</a>
 			</div>
 		</div>
 
 		<!-- 加载界面中 -->
 		<div class="loading hide" id="loading" >加载界面中...</div>
 
+		<!-- 提示 -->
+		<div class="prompt hide" id="prompt" >
+			<span>提示：</span>
+			<span class="text">-</span>
+			<a class="close" href="javascript:;">关闭</a>
+		</div>
+
 		<script type="text/javascript">
 
-			// 全部功能
 			var funs = {};
 
 			// 引用公共功能
 			funs.socket = new Socket();
+
 			funs.comm = new Comm();
+
 			funs.ui = new UI();
+
 			funs.user = new User();
+
+			funs.ux002 = new Ux002();
+
+
+
+
+			// 初始化功能进入按钮
+			funs.ui.initFunsBtn();
+
+			// 初始化，如果没有缓冲账号，则打开登录界面
+			if ( !funs.user.getCookie() ) {
+				funs.ui.toEntry();
+			}
+
+
+
+
 
 			// 登录后执行
 			funs.user.entrySuccess(function(){
 
 				// 引用模块功能
 				funs.ux001 = new Ux001();
-				funs.ux002 = new Ux002();
+
+				funs.ui.toUser();
+
+				funs.ui.text(false);
+
+				funs.socket.open();
 			});
 
 			// 注销后执行
 			funs.user.logoutSuccess(function(){
-				funs.ux002.login();
+
+				funs.socket.close();
+
+				funs.ui.toEntry();
 			});
-
-
-
-			// 如果有缓存则登录，没有则打开登录界面
-			if ( !funs.user.getUserByCookie() ) {
-				funs.user.setEntryUI();
-			}
-
-			// 初始化功能进入按钮
-			funs.ui.initFunsBtn();
 
 		</script>
 	</body>

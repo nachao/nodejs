@@ -17,17 +17,18 @@ function ServerWeb () {
 	*
 	*	private
 	*/
-	this.lib.comm = require('../funs/comm/lib.comm');
+	// this.lib.comm = require('../funs/comm/lib.comm');
 
-	this.lib.user = require('../funs/user/lib.user');
+	// this.lib.user = require('../funs/user/lib.user');
 
-	this.lib.mysql = require('../funs/mysql/lib.mysql');
+	// this.lib.mysql = require('../funs/mysql/lib.mysql');
 
-	this.lib.socket = require('../funs/socket/lib.socket');
+	// this.lib.socket = require('../funs/socket/lib.socket');
 
 
-	this.lib.sio = require('socket.io');
+	// this.lib.sio = require('socket.io');
 
+	console.log(this.lib.a);
 
 
 

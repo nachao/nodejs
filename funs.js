@@ -45,4 +45,58 @@ function Funs () {
 }
 
 
-module.exports = new Funs();
+global.b = 1;
+
+var lib = {
+
+	a: 1,
+
+
+	/*
+	* 	引用node模板
+	*
+	*	private
+	*/
+	mysql: require('mysql'),
+
+	http: require('http'),
+
+	path: require('path'),
+
+	url: require('url'),
+
+	fs: require('fs'),
+
+	sio: require('socket.io'),
+
+
+
+	/*
+	* 	引用自定义公共模板
+	*
+	*	private
+	*/
+	comm: require('./funs/comm/lib.comm'),
+
+	user: require('./funs/user/lib.user'),
+
+	mysql: require('./funs/mysql/lib.mysql'),
+
+	socket: require('./funs/socket/lib.socket'),
+
+
+
+	/*
+	* 	引用自定义功能模板
+	*
+	*	private
+	*/
+	ux001: require('./funs/001/lib.001'),
+
+	ux002: require('./funs/002/lib.002')
+}
+
+
+
+
+module.exports = lib;

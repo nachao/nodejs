@@ -42,19 +42,21 @@ Socket.prototype.init = function (server) {
 	var socket = that.socket.listen(server);
 
 	socket.on('connection', function(res){
-		var userkey = res.handshake.headers.cookie,
+		var cookie = res.handshake.headers.cookie,
 			key = null;
 
 		that.res = res;
-			
-		console.log('-----------------', new Date());
-		console.log(userkey);
 
-		if ( userkey.indexOf('ux=') >= 0 ) {
-			userkey = userkey.substr(userkey.indexOf('ux=') +3);
+		if ( cookie.indexOf('ux=') >= 0 ) {
+			cookie = cookie.substr(cookie.indexOf('ux=') +3);
+			cookie = cookie.split('&');
+			userkey = cookie[0];
 		} else {
 			userkey = '';
 		}
+			
+		console.log('-----------------', new Date());
+		// console.log(userkey);
 
 		// 设置获取前端的信息
 		for ( key in that.gets ) {

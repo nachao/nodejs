@@ -18,6 +18,17 @@ Comm.prototype.md5 = function ( value ) {
 }
 
 
+// 编码为md5
+Comm.prototype.base64 = function ( value ) {
+	var Buffer = require("buffer").Buffer;
+	var buf = new Buffer(value);
+	var str = buf.toString("binary");
+	var crypto = require("crypto");
+	var result = crypto.createHash("md5").update(str).digest("base64").replace(/\++/g, '');
+	return result.replace(/\++/g, '');
+}
+
+
 // Local - 将用户信息保存到服务器
 Comm.prototype.saveUserData = function ( userinfo ) {
 	if ( typeof(userinfo) == 'object' && userinfo.key ) {
@@ -52,10 +63,10 @@ Comm.prototype.successData = function ( data ) {
 
 
 // 遍历成功数据
-Comm.prototype.errerData = function ( data ) {
+Comm.prototype.errerData = function ( msg ) {
 	return {
 		status: 404,
-		msg: 'errer',
+		msg: msg || 'errer',
 		data: ''
 	};
 }
@@ -110,5 +121,8 @@ Comm.prototype.getFilePath = function ( name ) {
 		form: form
 	}
 }
+
+
+
 
 module.exports = new Comm();

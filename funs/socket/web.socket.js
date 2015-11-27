@@ -36,6 +36,18 @@ Socket.prototype.send = function ( key, data ) {
 }
 
 
+// 设置指定的数据
+Socket.prototype.close = function () {
+	this.socket.close();
+}
+
+
+// 设置指定的数据
+Socket.prototype.open = function () {
+	this.socket.open();
+}
+
+
 
 
 
