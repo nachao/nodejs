@@ -45,10 +45,19 @@
 		<div class="allUI">
 
 			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#000 - 兑换和赞助</p>
+					<p class="explain">选择你喜欢的方式赚积分，在这里兑换。也可以在这里低成本投放你广告。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
+			<!-- // -->
 			<div class="itemUI" key="ux001">
 				<div class="area">
-					<p class="name">#001 - Guess blindly</p>
-					<p class="explain">新平台后台的逆地理编码有问题 location:test priority:critical status:new type:bug</p>
+					<p class="name">#001 - 乱猜</p>
+					<p class="explain">随机下注1-9，每天0点刷新一次，下注无上限。</p>
 					<a class="close" href="javascript:;" >退出</a>
 					<div class="line"></div>
 				</div>
@@ -57,8 +66,8 @@
 			<!-- // -->
 			<div class="itemUI" key="ux002">
 				<div class="area">
-					<p class="name">#002 - On-hook</p>
-					<p class="explain">终端39E2800455在上周日的一段5分钟的行程飞出了5万公里，超过赤道周长</p>
+					<p class="name">#002 - 挂机</p>
+					<p class="explain">只要用户在线，就算挂机，挂机上限为100分。随时都可以提取挂机的积分。</p>
 					<a class="close" href="javascript:;" >退出</a>
 					<div class="line"></div>
 				</div>
@@ -67,11 +76,49 @@
 			<!-- // -->
 			<div class="itemUI">
 				<div class="area">
-					<p class="name">#998</p>
-					<p class="explain">Geocoding请求OVER_QUERY_LIMIT的情况仍旧非常严重 location:live type:enhancement</p>
+					<p class="name">#003 - 数数</p>
+					<p class="explain">可以用来锻炼注意力的一个小游戏。</p>
 					<a class="close" href="javascript:;" >退出</a>
 				</div>
 			</div>
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#004 - 自定义对错</p>
+					<p class="explain">猜什么您说了算，这里只有对错。切记：答案公布一定要真实，一旦作假将会受到严重的惩罚。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#005 - 段子市场</p>
+					<p class="explain">想看效果，来这里，想分享笑话来这里。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#011 - 反馈问题</p>
+					<p class="explain">只要你的反馈是确实存在的问题，我们会给你相应奖励。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
+
+			<!-- // -->
+			<div class="itemUI">
+				<div class="area">
+					<p class="name">#012 - 玩法提议</p>
+					<p class="explain">我们的目标是十万种玩法，大家一起来让脑洞遨游。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div>
+
 
 			<div class="clear"></div>
 		</div>
@@ -144,6 +191,9 @@
 				funs.ui.text(false);
 
 				funs.socket.open();
+
+				// 开启002功能
+				funs.ux002.start();
 			});
 
 			// 注销后执行

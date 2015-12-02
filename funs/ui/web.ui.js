@@ -13,7 +13,8 @@ UI.prototype.initEntryEvent = function () {
 	
 	// 登陆事件
 	$('#enteny').submit(function(){
-		return that.lib.user.setEntry({ account: that.account.value });
+		that.lib.user.accountEntry($('#account').val());
+		return false;
 	})
 }
 
@@ -55,7 +56,8 @@ UI.prototype.toEntry = function () {
 
 	entryEl.find('#account').val('');
 	entryEl.find('#btn').unbind('click').bind('click', function(){
-		that.lib.user.setEntry({ account: entryEl.find('#account').val() });
+		that.lib.user.accountEntry(entryEl.find('#account').val());
+		return false;
 	});
 
 	$('.userUI,.allUI,.contentUI').hide();	// 隐藏用户信息	// 隐藏所有功能列表	// 隐藏所有功能界面

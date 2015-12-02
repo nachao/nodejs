@@ -47,7 +47,10 @@ Socket.prototype.init = function (server) {
 
 		that.res = res;
 
-		if ( cookie.indexOf('ux=') >= 0 ) {
+		console.log('-----------------', new Date());
+		console.log(cookie);
+
+		if ( cookie && cookie.indexOf('ux=') >= 0 ) {
 			cookie = cookie.substr(cookie.indexOf('ux=') +3);
 			cookie = cookie.split('&');
 			userkey = cookie[0];
@@ -55,7 +58,6 @@ Socket.prototype.init = function (server) {
 			userkey = '';
 		}
 			
-		console.log('-----------------', new Date());
 		// console.log(userkey);
 
 		// 设置获取前端的信息

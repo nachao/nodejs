@@ -71,6 +71,11 @@ User.prototype.uid = function () {
 	return this.userinfo.uid;
 }
 
+// 显示指定的界面
+User.prototype.key = function () {
+	return this.userinfo.key;
+}
+
 
 // 显示指定的界面
 User.prototype.name = function () {
@@ -82,29 +87,20 @@ User.prototype.name = function () {
 User.prototype.sum = function ( value ) {
 	if ( value ) {
 		this.userinfo.sum = value;
-		$('.userUI .sum').html(value[key]);
+		$('.userUI .sum').html(value);
 	}
 	return this.userinfo.sum || '0';
 }
 
 
-
-
-
-// 用户注销
-User.prototype.setLogout = function () {
-	var that = this;
-
-	that.comm.on(function(res){
-		if ( res.status == '200' ) {
-			that.param.logout();
-			that.userinfo = null;	// 删除功能数据
-			that.delCookie();	// 注销缓存
-		}
-	}, {
-		logout: that.uid()
-	});
+// 显示指定的界面
+User.prototype.income = function ( value ) {
+	this.sum(this.userinfo.sum + value);
 }
+
+
+
+
 
 
 // 用户登录注册
@@ -113,12 +109,25 @@ User.prototype.setEntry = function ( param ) {
 
 	that.param.begin();
 
+	// 接受到后台传回的值的时候执行
 	that.comm.on(function(res){
 
 		// 后台返回登陆成功时
 		if ( res.status == '200' ) {
-			that.userinfo = res.data;						// 保存数据到功能中
-			that.setCookie(res.data.uid, res.data.key);		// 保存数据到缓存中，持续24小时
+			that.userinfo = res.data;	// 保存数据到功能中
+			that.setCookie(that.userinfo.uid, that.userinfo.key);	// 保存数据到缓存中，持续24小时
+
+			// 刷新钥匙成功后回复后台已收到
+			that.comm.api('user', 'createKey', function(res){
+				that.userinfo.key = res.data;
+				that.setCookie(that.userinfo.uid, that.userinfo.key);	// 保存数据到缓存中，持续24小时
+
+				// 回复后台已收到，并确认
+				that.comm.api('user', 'keyConfirm', { 
+					key: that.userinfo.key,
+					uid: that.userinfo.uid
+				});
+			});
 			that.param.entry();
 
 		// 后台返回登陆失败时
@@ -204,8 +213,51 @@ User.prototype.cookieEntry = function () {
 	var value = this.getCookie();
 
 	if ( value ) {
-		this.setEntry({ cache: value.uid, key: value.key });
+		this.setEntry({
+			module: 'user',
+			call: 'keyEntry',
+			data: {
+				uid: value.uid,
+				key: value.key
+			},
+			// callback: {
+			// 	ux002: 'setOnline'
+			// }
+		});
 	}
+}
+
+
+// 获取用户缓存数据
+User.prototype.accountEntry = function ( account ) {
+	var value = {
+			module: 'user',
+			call: 'accountEntry',
+			data: {
+				account: account
+			},
+			// callback: {
+			// 	ux002: 'setOnline'
+			// }
+		};
+
+	if ( account ) {
+		this.setEntry(value);
+	}
+}
+
+
+// 用户注销
+User.prototype.setLogout = function () {
+	var that = this;
+
+	that.comm.api('user', 'setLogout', function(res){
+		if ( res.status == '200' ) {
+			that.param.logout();
+			that.userinfo = null;	// 删除功能数据
+			that.delCookie();	// 注销缓存
+		}
+	});
 }
 
 

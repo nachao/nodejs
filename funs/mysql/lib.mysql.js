@@ -45,19 +45,6 @@ Mysql.prototype.init = function ( callback ) {
 }
 
 
-// 刷新用户积分
-Mysql.prototype.setSum = function ( key, num, callback ) {
-	var sql = "UPDATE `ux73`.`user` SET `sum`='"+ num +"' WHERE `key`='"+ key +"';";
-	this.connection.query(sql, function(err) {
-		if (err)
-			console.log(err);
-		else
-			if ( callback )
-				callback(key, num);
-	});
-}
-
-
 
 module.exports = new Mysql();
 

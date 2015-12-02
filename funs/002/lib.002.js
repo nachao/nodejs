@@ -1,3 +1,21 @@
+/*====
+
+// 数据库说明
+	'time_start' = 最近一次开始计算时间
+
+
+'time_end' = 最近一次离线时间
+'time_current' = 当日挂机中未提现出的总时间（秒）
+'time_total' = 当日已经提现并兑换成积分的总时间（秒）
+
+// 方法说明
+	_updateCurrent()
+	应用场景：
+		每次登录成功时、每次进入挂机界面时、每次点击领取时
+
+
+
+====*/
 
 
 // 挂机
@@ -32,6 +50,8 @@ function Ux002 () {
 	this.lib.mysql.init();
 
 
+
+
 	// 简化外部方法
 
 	// 提示
@@ -49,178 +69,15 @@ Ux002.prototype.init = function ( socket ) {
 
 	that.lib.socket = socket;
 
-	// 登陆后记录并导出数据
-	// socket.on('entry', function(userkey){
-	// 	console.log(' ----------- entry', userkey);
-	// 	that.getLog(userkey, function(data){
-	// 		console.log(' --- entry data', data);
-	// 		if ( data ) {
-	// 			if ( data.status == '0' ) {
-	// 				that.updateStart(userkey, function(success, time){
-	// 					if ( success ) {
-	// 						data.start = time;
-	// 						data.status = 1;
-	// 						console.log(' --- socket.entry', data);
-	// 					}
-	// 				});
-	// 			}
-	// 		} else {
-	// 			that.addLog(userkey, function(data){
-	// 				console.log(' --- addLog', data);
-	// 			});
-	// 		}
-	// 	});
-	// });
-
-
 	// 关闭浏览器后记录并计算
 	socket.close(function(userkey) {
-		if ( !userkey ) {
-			return;
-		}
-		console.log(' ----------- close', userkey);
-		that.getLog(userkey, function(data){
-			console.log(' --- close data', data);
-			that.updateValue(userkey, data, function(data){
-				that.updateEnd(userkey, function(success, time){
-					if ( success ) {
-						data.start = time;
-						data.status = 0;
-						console.log(' --- socket.close', data);
-					}
-				});
-			});
-		});	
-	});
-
-	// 注销后记录并计算
-	// socket.on('logout', function(userkey){
-	// 	console.log(' ----------- logout', userkey);
-	// 	that.getLog(userkey, function(data){
-	// 		console.log(' --- logout data', data);
-	// 		that.updateValue(userkey, data, function(data){
-	// 			that.updateEnd(userkey, function(success, time){
-	// 				if ( success ) {
-	// 					data.start = time;
-	// 					data.status = 0;
-	// 					console.log(' --- socket.logout', data);
-	// 				}
-	// 			});
-	// 		});
-	// 	});		
-	// });
-
-	// 进入功能，返回数据
-	// socket.on('get into', function(userkey){
-	// 	console.log(' ----------- get into', userkey);
-	// 	that.getLog(userkey, function(data){
-	// 		that.updateValue(userkey, data, function(data){
-	// 			socket.send('data', that.lib.comm.successData(data));
-	// 			console.log(' --- data', data);
-	// 		});
-	// 	});
-	// });
-
-	// 领取
-	// socket.on('get integral', function(userkey){
-	// 	that.getLog(userkey, function(data){
-
-	// 	});
-	// });
-
-
-	// socket.send('data', {a:'客服端你好！'});
-
-	// socket.get('data', function(data){
-	// 	console.log(data);
-	// });
-
-
-	// var socket = this.lib.sio.listen(server);
-
-	// var that = this;
-
-	// socket.on('connection', function(res){
-
-	// 	// 离开提示
-	// 	res.on('disconnect', function(data){
-	// 		console.log('---- connection ux002 ---- close', res.handshake.headers.cookie);
-	// 	});
-
-	// 	// 链接提示
-	// 	console.log('---- connection ux002 ---- open', res.handshake.headers.cookie);
-	// 	// res.send('welcome to 001.');
-	// });
-
-	// console.log('Ux002.prototype.init...');
-}
-
-
-// 上线执行操作
-Ux002.prototype.setOnline = function ( userkey ) {
-	var that = this;
-
-	console.log(' ----------- entry', userkey);
-	that.getLog(userkey, function(data){
-		console.log(' --- entry data', data);
-		if ( data ) {
-			if ( data.status == '0' ) {
-				that.updateStart(userkey, function(success, time){
-					if ( success ) {
-						data.start = time;
-						data.status = 1;
-						console.log(' --- socket.entry', data);
-					}
-				});
-			}
-		} else {
-			that.addLog(userkey, function(data){
-				console.log(' --- addLog', data);
+		if ( userkey ) {
+			that._updateCurrentEnd({
+				uid: userkey
 			});
 		}
 	});
 }
-
-
-// 下线执行操作
-Ux002.prototype.setOffline = function ( userkey ) {
-	var that = this;
-
-	console.log(' ----------- logout', userkey);
-	that.getLog(userkey, function(data){
-		console.log(' --- logout data', data);
-		that.updateValue(userkey, data, function(data){
-			that.updateEnd(userkey, function(success, time){
-				if ( success ) {
-					data.start = time;
-					data.status = 0;
-					console.log(' --- socket.logout', data);
-				}
-			});
-		});
-	});
-}
-
-
-// 下线执行操作
-Ux002.prototype.setOffline = function ( userkey ) {
-	var that = this;
-
-	console.log(' ----------- logout', userkey);
-	that.getLog(userkey, function(data){
-		console.log(' --- logout data', data);
-		that.updateValue(userkey, data, function(data){
-			that.updateEnd(userkey, function(success, time){
-				if ( success ) {
-					data.start = time;
-					data.status = 0;
-					console.log(' --- socket.logout', data);
-				}
-			});
-		});
-	});
-}
-
 
 
 // 获取今天0点的时间戳
@@ -235,31 +92,15 @@ Ux002.prototype.getTodayStart = function (){
 }
 
 
-// 搜索用户当日的记录
-Ux002.prototype.getLog = function ( userkey, callback ){
-	var sql = "SELECT `time_start`, `time_total`, `time_current`, `current_status` FROM ux73.ux002 where `time_begin` > "+ this.getTodayStart() +" and `userkey` = '"+ userkey +"';";
-
-	this.lib.mysql.connection.query(sql, function(err, row){
-		if ( !err && callback ) {
-			var data = row[0];
-
-			if ( data ) {
-				data = {
-					start: parseInt(data.time_start),
-					total: parseInt(data.time_total),
-					current: parseInt(data.time_current),
-					status: data.current_status
-				}
-			}
-
-			callback(data);
-		}
-	});
-}
-
-
-// 添加用户当前的记录
-Ux002.prototype.addLog = function ( userkey, callback ){
+/*
+*  添加用户当前的记录
+*
+*  @ param {string} uid = 用户唯一id
+*  @ param {function} callback = 回调
+*
+*  @ private
+*/
+Ux002.prototype._addLog = function ( uid, callback ){
 	var time = parseInt(new Date().getTime() / 1000),
 		resule = {
 			start: time,
@@ -267,9 +108,9 @@ Ux002.prototype.addLog = function ( userkey, callback ){
 			current: 0,
 			status: 1
 		},
-		sql = "INSERT INTO `ux73`.`ux002` (`userkey`, `time_start`, `time_begin`) " + "VALUES ('"+ userkey +"', '"+ time +"', '"+ time +"');";
+		sql = "INSERT INTO `ux73`.`ux002` (`userkey`, `time_start`, `time_begin`) " + "VALUES ('"+ uid +"', '"+ time +"', '"+ time +"');";
 
-	if ( userkey ) {
+	if ( uid ) {
 		this.lib.mysql.connection.query(sql, function(err){
 			if ( !err && callback )
 				callback(resule);
@@ -278,113 +119,222 @@ Ux002.prototype.addLog = function ( userkey, callback ){
 }
 
 
-// 刷新用户当前的离开时间和总时间
-Ux002.prototype.updateIncome = function ( userkey, data, callback ){
+/*
+*  搜索用户当日的记录
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ private
+*/
+Ux002.prototype._getLog = function ( uid, callback ){
 	var time = parseInt(new Date().getTime() / 1000),
-		that = this;
+		begin = this.getTodayStart(),
+		sql = "SELECT `time_start`, `time_total`, `time_current`, `current_status` FROM ux73.ux002 where `time_begin` > "+ begin +" and `userkey` = '"+ uid +"';";
 
-	// that.getLog(userkey, function(data){
-		if ( data ) {
-			var total = time - data.start + data.total,
-				current = time - data.start + data.current,
-				sql = "UPDATE `ux73`.`ux002` SET `time_total`='"+ total +"', `time_current`='"+ current +"' WHERE `time_begin` > "+ that.getTodayStart() +" and `userkey`='"+ userkey +"';";
+	this.lib.mysql.connection.query(sql, function(err, row, info){
+		if ( !err && callback ) {
+			var data = row[0];
 
-			that.lib.mysql.connection.query(sql, function(err){
-				if ( !err && callback )
-					callback({
-						start: time,
-						total: total,
-						current: current
-					});
-			});
-		} else {
-			if ( callback )
+			// 如果有则返回
+			if ( data ) {
+				data.start = parseInt(data.time_start);
+				data.total = parseInt(data.time_total);
+				data.current = parseInt(data.time_current);
+				data.status = data.current_status;
+				data.once = 60;
+				data.insert = parseInt(time - data.time_start);
+				data.time = time;
+				data.begin = begin;
+				data.number = parseInt(data.current / data.once);
+				data.numberTime = data.number * data.once;
+
 				callback(data);
-		}
-	// });
-}
 
+			// 没有搜索到用户数据则创建
+			} else {
+				that._addLog(uid, function(data){
 
-// 刷新上线时间
-Ux002.prototype.updateStart = function ( userkey, callback ){
-	var time = parseInt(new Date().getTime() / 1000),
-		sql = "UPDATE `ux73`.`ux002` SET `time_start`='"+ time +"', `current_status` = '1' WHERE `time_begin` > "+ this.getTodayStart() +" and `userkey`='"+ userkey +"';";
-
-	if ( userkey ) {
-		this.lib.mysql.connection.query(sql, function(err, info){
-			if ( !err && callback )
-				callback(info.affectedRows, time);
-		});
-	}
-
-	return time;
-}
-
-
-// 刷新离开时间
-Ux002.prototype.updateEnd = function ( userkey, callback ){
-	var time = parseInt(new Date().getTime() / 1000),
-		sql = "UPDATE `ux73`.`ux002` SET `time_end`='"+ time +"', `current_status` = '0' WHERE `time_begin` > "+ this.getTodayStart() +" and `userkey`='"+ userkey +"';";
-
-	if ( userkey ) {
-		this.lib.mysql.connection.query(sql, function(err, info){
-			if ( !err && callback )
-				callback(info.affectedRows, time);
-		});
-	}
-
-	return time;
-}
-
-
-// 刷新用户当前的离开时间和总时间
-Ux002.prototype.updateValue = function ( userkey, data, callback ){
-	var time = parseInt(new Date().getTime() / 1000),
-		that = this;
-
-	if ( data && data.status ) {
-		var total = time - data.start + data.total,
-			current = time - data.start + data.current,
-			sql = "UPDATE `ux73`.`ux002` SET `time_end`='"+ time +"', `time_total`='"+ total +"', `time_current`='"+ current +"', `time_start`='"+ time +"' WHERE `time_begin` > "+ that.getTodayStart() +" and `userkey`='"+ userkey +"';";
-
-		that.lib.mysql.connection.query(sql, function(err){
-			if ( !err && callback )
-				callback({
-					start: time,
-					total: total,
-					current: current
 				});
-		});
-	}
-}
+			}
 
-
-// 进入界面时刷新或创建当日数据
-Ux002.prototype.setInitData = function ( userkey, callback ){
-	var that = this;
-
-	callback = callback || function () {};
-
-	if ( !userkey ) {
-		if ( callback ) {
-			callback(that.lib.comm.errerData(data));
-		}
-		return;
-	}
-
-	// 如果是当日再次登录则刷新记录
-	that.updateValue(userkey, function(data){
-		if ( data ) {
-			callback(that.lib.comm.successData(data));
-		} else {
-			// 如果是当日首次登录则创建记录并返回记录信息
-			// data = that.addLog(userkey);
-			callback(that.lib.comm.successData(data));
 		}
 	});
 }
 
 
+/*
+*  根据后台数据进行解析
+*
+*  @ param {object} data = 参数
+*
+*  @ private
+*/
+Ux002.prototype._getLogParse = function ( value ){
+	var result = {};
+
+	value = value || {};
+
+	result.once = 60;
+
+	result.start = parseInt(value.time_start);
+	result.current = parseInt(value.time_current);
+	result.total = parseInt(value.time_total);
+	result.status = value.current_status;
+
+	result.time = parseInt(new Date().getTime() / 1000);
+	result.begin = this.getTodayStart();
+
+	result.insert = parseInt(result.time - result.start);
+	result.number = parseInt(result.current / result.once);
+	result.numberTime = result.number * result.once;
+
+	return data;
+}
+
+
+/*
+*  开始计时，刷新用户本日挂机的总时间，和更新开始时间
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ private
+*/
+Ux002.prototype._updateCurrent = function ( param ,callback ){
+	var that = this,
+		sql = '';
+
+	that._getLog(param.uid, function(data){
+		data.current += data.insert;
+		data.number = parseInt(data.current / data.once);
+		data.numberTime = data.number * data.once;
+
+		sql = "UPDATE `ux73`.`ux002` SET `time_current`='"+ data.current +"', `time_start`='"+ data.time +"', `current_status`='1' WHERE `time_begin` > "+ data.begin +" and `userkey`='"+ param.uid +"';";
+
+		if ( param.uid ) {
+			that.lib.mysql.connection.query(sql, function(err, info){
+				if ( !err && callback ) {
+					callback(that.lib.comm.successData(data));
+				}
+			});
+		}
+	});
+}
+
+
+/*
+*  刷新本日领取总时间，和刷新挂机剩余总时间
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ private
+*/
+Ux002.prototype._updateTotal = function ( param, callback ){
+	var that = this,
+		sql = '';
+
+	that._updateCurrent(param, function(data){
+		sql = "UPDATE `ux73`.`ux002` SET `time_total`='"+ data.total +"', `time_current`='"+ data.current +"' WHERE `time_begin` > "+ that.begin +" and `userkey`='"+ param.uid +"';";
+
+		if ( param.uid ) {
+			that.lib.mysql.connection.query(sql, function(err, info){
+				if ( !err && callback )
+					callback(that.lib.comm.successData(data));
+			});
+		} else {
+			callback(that.lib.comm.errerData('刷新本日领取总时间，失败！'));
+		}
+	});
+}
+
+
+/*
+*  结束计时，刷新用户本日挂机的总时间，和更新开始时间
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ private
+*/
+Ux002.prototype._updateCurrentEnd = function ( param ,callback ){
+	var that = this,
+		sql = '';
+
+	that._updateCurrent(param, function(data){
+		data.current += data.insert;
+		sql = "UPDATE `ux73`.`ux002` SET `time_end`='"+ data.time +"', `current_status`='0' WHERE `time_begin` > "+ data.begin +" and `userkey`='"+ param.uid +"';";
+
+		if ( param.uid ) {
+			that.lib.mysql.connection.query(sql, function(err, info){
+				if ( !err && callback )
+					callback(that.lib.comm.successData(data));
+			});
+		} else {
+			callback(that.lib.comm.errerData('结束挂机，失败！'));
+		}
+	});
+}
+
+
+
+
+
+
+// -------------------------------------------
+
+
+/*
+*  开始挂机
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ publice
+*/
+Ux002.prototype.start = function ( param ,callback ){
+	this._updateCurrent(param ,callback);
+}
+
+
+/*
+*  更新挂机
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ publice
+*/
+Ux002.prototype.update = function ( param ,callback ){
+	this._updateCurrent(param ,callback);
+}
+
+
+/*
+*  结束挂机
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ publice
+*/
+Ux002.prototype.end = function ( param ,callback ){
+	this._updateCurrentEnd(param ,callback);
+}
+
+
+/*
+*  领取累积时间的整数
+*
+*  @ param {object} param = 参数
+*  @ param {function} callback = 回调
+*
+*  @ publice
+*/
+Ux002.prototype.receive = function ( param ,callback ){
+	this._updateTotal(param ,callback);
+}
 
 
 

@@ -66,12 +66,14 @@ ServerAjax.prototype.init = function(first_argument) {
 			"Access-Control-Allow-Origin": "*"
 		});
 
+		console.log('---------------------------------------------------');
+		console.log('----', new Date());
+		console.log('----', query);
+
 		// 调用专属功能 - 获取并判断用户操作
 		that.getUse(info.query, function(data){
 
-			console.log('-----------------', new Date());
-			console.log(query);
-			console.log(data);
+			console.log('----', data);
 
 			res.write(data);
 			res.end();
@@ -89,7 +91,33 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 	var result = null,
 		that = this;
 
-		callback = callback || function (){};
+	query.data = JSON.parse(query.data);
+
+	callback = callback || function (){};
+
+	if ( that.lib[query.module] && that.lib[query.module][query.call] ) {
+
+		// 根据前端给定的参数，进行事件调用和传值
+		that.lib[query.module][query.call](query.data, function(res){
+
+			// 回调
+			if ( res.status == 200 && query.callback ) {
+				query.callback = JSON.parse(query.callback);
+
+				for ( var module in query.callback ) {
+					that.lib[module][query.callback[module]](res.data.uid);		// 通知功能
+				}
+			}
+
+			callback(JSON.stringify(res));
+		});
+	} else {
+		callback(that.lib.comm.errerJSON());
+	}
+
+
+
+	/*
 
 	// 缓存登录
 	if ( query.cache ) {
@@ -149,11 +177,12 @@ ServerAjax.prototype.getUse = function ( query, callback ) {
 			});
 		});
 
+
 	// 无对应的后台操作
 	} else {
 		callback(that.lib.comm.errerJSON());
 	}
-
+*/
 }
 
 
