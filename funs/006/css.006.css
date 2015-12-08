@@ -1,0 +1,178 @@
+
+
+.ux006{
+	padding: 0 5%;
+}
+.ux006 .head{
+	border-left: 3px solid #666;
+	padding-left: 10px;
+	position: relative;
+}
+.ux006 .head .title{
+	font-size: 20px;
+}
+.ux006 .head .label{
+	font-size: 14px;
+	color: black;
+	text-decoration: none;
+	color: #999;
+	margin-left: 10px;
+}
+.ux006 .head .label:hover{
+	text-decoration: underline;
+	color: #666;
+}
+.ux006 .head .close{
+	display: inline-block;
+	height: 100%;
+	color: white;
+	text-decoration: none;
+	font-size: 40px;
+	background: #999;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 50px;
+	text-align: center;
+	border-radius: 2px 0 0 2px;
+}
+.ux006 .head .close:hover{
+	background: #666;
+}
+.ux006 .head .close:active{
+	background: red;
+}
+.ux006 .head .depict{
+	font-size: 12px;
+	margin-top: 10px;
+	color: #333;
+}
+
+
+.ux006 .content{
+	display: inline-block;
+	width: 100%;
+	padding: 33px 0 100px;
+}
+.ux006 .team{
+	width: 30%;
+	float: left;
+}
+
+
+.ux006 .vs{
+	float: left;
+	width: 40%;
+	height: 100%;
+	text-align: center;
+}
+.ux006 .vs span{
+	font-size: 73px;
+	display: inline-block;
+}
+.ux006 .vs .btn{
+	margin-top: 20px;
+}
+.ux006 .vs a{
+	display: inline-block;
+	padding: 0 25px;
+	line-height: 33px;
+	border-radius: 3px;
+	color: black;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	background: #f6f6f6;
+	text-align: center;
+	color: #666;
+	margin: 0 10px;
+	margin-top: 10px;
+}
+.ux006 .vs a:hover{
+}
+.ux006 .vs .start{
+	display: none;
+}
+.ux006 .vs .end{
+	/*display: none;*/
+}
+.ux006 .vs .end-win:hover{
+	border: 1px solid green;
+	color: green;
+}
+.ux006 .vs .end-fail:hover{
+	border: 1px solid red;
+	color: red;
+}
+
+
+.ux006 .player{
+}
+.ux006 .player .user{
+	font-size: 16px;
+	line-height: 33px;
+	border-bottom: 1px dashed #ccc;
+	height: 33px;
+	padding: 10px 0;
+}
+.ux006 .player .user a{
+	color: black;
+}
+.ux006 .player .user a:hover{
+	color: green;
+}
+.ux006 .player .user img{
+	width: 22px;
+	float: left;
+	margin-right: 10px;
+	position: relative;
+	top: 6px;
+	border-radius: 16px;
+}
+.ux006 .player .user .wager{
+	float: right;
+	padding: 0 10px;
+}
+.ux006 .player .user .number{
+	float: right;
+}
+.ux006 .player .user .join{
+	display: inline-block;
+	padding: 0 20px;
+	color: green;
+	font-weight: bold;
+	text-decoration: none;
+}
+.ux006 .player .user .join:hover{
+	text-decoration: underline;
+}
+
+
+/*.ux006 .join{
+	display: inline-block;
+	width: 100px;
+	line-height: 33px;
+	border-radius: 3px;
+	color: black;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	background: #f6f6f6;
+	text-align: center;
+	color: #666;
+}
+.ux006 .join:hover{
+	border: 1px solid green;
+	color: green;
+	font-weight: bold;
+}*/
+.ux006 .wager{
+	color: black;
+	text-decoration: none;
+	margin-left: 20px;
+}
+.ux006 .wager:hover{
+	text-decoration: underline;
+}
+
+.ux006 .onlookers{
+	margin-top: 20px;
+}

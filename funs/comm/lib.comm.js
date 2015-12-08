@@ -53,10 +53,10 @@ Comm.prototype.getUserData = function ( userkey ) {
 
 
 // 遍历成功数据
-Comm.prototype.successData = function ( data ) {
+Comm.prototype.successData = function ( data, msg ) {
 	return {
 		status: 200,
-		msg: 'success',
+		msg: msg || 'success',
 		data: data
 	};
 }

@@ -4,14 +4,20 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="./css/comm.css" />
 		<link rel="stylesheet" type="text/css" href="./funs/002/css.002.css" />
+		<link rel="stylesheet" type="text/css" href="./funs/006/css.006.css" />
+
 		<script type="text/javascript" src="./js/jquery-1.11.0.min.js" ></script>
 		<script type="text/javascript" src="../node_modules/socket.io/node_modules/socket.io-client/socket.io.js" ></script>
+		<script type="text/javascript" src="./funs/abc/na.object-1.0.js" ></script>
 		<script type="text/javascript" src="./funs/comm/web.comm.js" ></script>
 		<script type="text/javascript" src="./funs/ui/web.ui.js" ></script>
 		<script type="text/javascript" src="./funs/user/web.user.js" ></script>
 		<script type="text/javascript" src="./funs/socket/web.socket.js" ></script>
-		<script type="text/javascript" src="./funs/001/web.001.js" ></script>
-		<script type="text/javascript" src="./funs/002/web.002.js" ></script>
+		<script type="text/javascript">
+
+			var ux = {};
+
+		</script>
 	</head>
 	<body>
 
@@ -47,56 +53,65 @@
 			<!-- // -->
 			<div class="itemUI">
 				<div class="area">
-					<p class="name">#000 - 兑换和赞助</p>
+					<p class="name">#001 - 兑换和赞助</p>
 					<p class="explain">选择你喜欢的方式赚积分，在这里兑换。也可以在这里低成本投放你广告。</p>
 					<a class="close" href="javascript:;" >退出</a>
 				</div>
 			</div>
 
 			<!-- // -->
-			<div class="itemUI" key="ux001">
+			<!-- <div class="itemUI" key="ux001">
 				<div class="area">
 					<p class="name">#001 - 乱猜</p>
 					<p class="explain">随机下注1-9，每天0点刷新一次，下注无上限。</p>
 					<a class="close" href="javascript:;" >退出</a>
 					<div class="line"></div>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- // -->
-			<div class="itemUI" key="ux002">
+			<!-- <div class="itemUI" key="ux002">
 				<div class="area">
 					<p class="name">#002 - 挂机</p>
 					<p class="explain">只要用户在线，就算挂机，挂机上限为100分。随时都可以提取挂机的积分。</p>
 					<a class="close" href="javascript:;" >退出</a>
 					<div class="line"></div>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- // -->
-			<div class="itemUI">
+			<!-- <div class="itemUI">
 				<div class="area">
 					<p class="name">#003 - 数数</p>
 					<p class="explain">可以用来锻炼注意力的一个小游戏。</p>
 					<a class="close" href="javascript:;" >退出</a>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- // -->
-			<div class="itemUI">
+			<!-- <div class="itemUI">
 				<div class="area">
 					<p class="name">#004 - 自定义对错</p>
 					<p class="explain">猜什么您说了算，这里只有对错。切记：答案公布一定要真实，一旦作假将会受到严重的惩罚。</p>
 					<a class="close" href="javascript:;" >退出</a>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- // -->
-			<div class="itemUI">
+			<!-- <div class="itemUI">
 				<div class="area">
 					<p class="name">#005 - 段子市场</p>
 					<p class="explain">想看效果，来这里，想分享笑话来这里。</p>
 					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div> -->
+
+			<!-- // -->
+			<div class="itemUI" id="ux006_Open" key="ux006" >
+				<div class="area">
+					<p class="name">#006 - PK</p>
+					<p class="explain">自定义比赛，分为两个阵营，队伍上限五人，围观人数不限。</p>
+					<a class="close" id="ux006_Close" href="javascript:;" >退出</a>
 				</div>
 			</div>
 
@@ -109,15 +124,23 @@
 				</div>
 			</div>
 
-
 			<!-- // -->
-			<div class="itemUI">
+			<!-- <div class="itemUI">
 				<div class="area">
 					<p class="name">#012 - 玩法提议</p>
 					<p class="explain">我们的目标是十万种玩法，大家一起来让脑洞遨游。</p>
 					<a class="close" href="javascript:;" >退出</a>
 				</div>
-			</div>
+			</div> -->
+
+			<!-- // -->
+			<!-- <div class="itemUI">
+				<div class="area">
+					<p class="name">#013 - 充值</p>
+					<p class="explain">暂未开发。</p>
+					<a class="close" href="javascript:;" >退出</a>
+				</div>
+			</div> -->
 
 
 			<div class="clear"></div>
@@ -140,6 +163,96 @@
 			</div>
 		</div>
 
+		<!-- 006 - 内容 -->
+		<div class="contentUI ux006 ux006UI" id="ux006" style="display: block;" >
+			<div class="area"><span class="line"></span></div>
+			
+			<div id="ux006Template" >
+				<div class="head">
+					<div class="title">
+						<span>自定义比赛</span>
+						<a class="label" href="javascript:;">#英雄联盟</a>
+						<a class="close" href="javascript:;" >×</a>
+					</div>
+					<div class="depict">准备中，当前有10人参加，92人围观，押注共计：513,200分。</div>
+				</div>
+				<div class="content">
+					<div class="team">
+						<div class="player">
+							<div class="user">
+								<span>命名为老A</span>
+								<span class="number">200</span>
+							</div>
+							<div class="user">
+								<span>哈哈哈</span>
+								<span class="number">135</span>
+							</div>
+							<div class="user">
+								<span>FA123a（房主）</span>
+								<span class="number">100</span>
+								<a class="wager" href="javascript:;">下注</a>
+							</div>
+							<div class="user">
+								<span>2156487321</span>
+								<span class="number">100</span>
+							</div>
+							<div class="user">
+								<span>我一了就</span>
+								<span class="number">100</span>
+							</div>
+						</div>
+						<div class="operate">
+							<!-- <a class="join" href="javascript:;">加入队伍</a> -->
+							<!-- <a class="wager" href="javascript:;">下注</a> -->
+						</div>
+						<!-- <div class="my">我：选手</div> -->
+						<!-- <div class="onlookers">49人支持（49分）。</div> -->
+					</div>
+					<div class="vs">
+						<span>vs</span>
+						<div class="time">00:12</div>
+						<div class="btn">
+							<a class="start" href="javascript:;">开始</a>
+							<a class="end end-win" href="javascript:;">我胜了</a>
+							<a class="end end-fail" href="javascript:;">我败了</a>
+						</div>
+					</div>
+					<div class="team">
+						<div class="player">
+							<div class="user">
+								<span><img src="./img/avatar.jpg" /></span>
+								<span>42312314</span>
+								<span class="number">100</span>
+							</div>
+							<div class="user">FAmai
+								<span>FAmai</span>
+								<span class="number">100</span>
+							</div>
+							<div class="user">
+								<span>fq123</span>
+								<span class="number">100</span>
+							</div>
+							<div class="user">fq123
+								<span>f12312</span>
+								<span class="number">100</span>
+							</div>
+							<!-- <div class="user">前五大行出去爱上</div> -->
+							<!-- <div class="user">
+								<a class="join" href="javascript:;"><span>加入</span></a>
+							</div> -->
+						</div>
+						<div class="operate">
+							<!-- <a class="join" href="javascript:;">加入队伍</a> -->
+							<!-- <a class="wager" href="javascript:;">下注</a> -->
+						</div>
+						<!-- <div class="my">我：选手</div> -->
+						<!-- <div class="onlookers">0人支持（0分）。</div> -->
+					</div>
+				</div>
+			</div>
+
+		</div>
+
 		<!-- 加载界面中 -->
 		<div class="loading hide" id="loading" >加载界面中...</div>
 
@@ -150,6 +263,9 @@
 			<a class="close" href="javascript:;">关闭</a>
 		</div>
 
+		<script type="text/javascript" src="./funs/001/web.001.js" ></script>
+		<script type="text/javascript" src="./funs/002/web.002.js" ></script>
+		<script type="text/javascript" src="./funs/006/web.006.js" ></script>
 		<script type="text/javascript">
 
 			var funs = {};

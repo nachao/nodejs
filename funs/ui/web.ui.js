@@ -29,8 +29,14 @@ UI.prototype.initFunsBtn = function () {
 		if ( !el.hasClass('itemAct') ) {
 			el.siblings('.itemUI').hide();
 			el.addClass('itemAct').stop().animate({ width: '100%' }, 500, function(){
+				var key = el.attr('key');
 				el.find('.close').show();
-				that.lib[el.attr('key')].init();
+				console.log(el);
+				if ( that.lib[el.attr('key')] )
+					that.lib[el.attr('key')].init();
+
+				if ( key == 'ux006' )
+					ux._006.get()
 			});
 		}
 	});
